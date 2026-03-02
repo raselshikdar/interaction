@@ -27,7 +27,8 @@ import {
   HelpSettingsPage,
   AboutSettingsPage,
   ModerationSettingsPage,
-  AddAccountSettingsPage
+  AddAccountSettingsPage,
+  PostDetailPage
 } from '@/components/bsky';
 import { Header } from '@/components/bsky';
 import { Button } from '@/components/ui/button';
@@ -48,7 +49,7 @@ import {
 } from 'lucide-react';
 
 // Navigation view type
-type ViewType = 'home' | 'explore' | 'notifications' | 'messages' | 'profile' | 'settings' | 'saved' | 'feeds' | 'feeds-settings' | 'lists' | 'chat' | 'search' 
+type ViewType = 'home' | 'explore' | 'notifications' | 'messages' | 'profile' | 'settings' | 'saved' | 'feeds' | 'feeds-settings' | 'lists' | 'chat' | 'search' | 'post'
   | 'settings-account' | 'settings-privacy' | 'settings-notifications' | 'settings-content' | 'settings-appearance' | 'settings-accessibility' | 'settings-language' | 'settings-help' | 'settings-about' | 'settings-moderation' | 'settings-add-account';
 
 export default function HomePage() {
@@ -65,6 +66,7 @@ export default function HomePage() {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [currentView, setCurrentView] = useState<ViewType>('home');
   const [profileHandle, setProfileHandle] = useState<string | null>(null);
+  const [activePostId, setActivePostId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTopic, setSearchTopic] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<PostType[]>([]);
@@ -77,6 +79,11 @@ export default function HomePage() {
       if (hash.startsWith('profile/')) {
         setProfileHandle(hash.split('/')[1]);
         setCurrentView('profile');
+        setSearchTopic(null);
+        setActivePostId(null);
+      } else if (hash.startsWith('post/')) {
+        setActivePostId(hash.split('/')[1]);
+        setCurrentView('post');
         setSearchTopic(null);
       } else if (hash.startsWith('search/')) {
         const topic = decodeURIComponent(hash.split('/')[1]);
@@ -232,6 +239,15 @@ export default function HomePage() {
     }
   };
 
+  // Shared post/author click handlers passed to every <Post>
+  const handlePostClick = (postId: string) => {
+    window.location.hash = `post/${postId}`;
+  };
+
+  const handleAuthorClick = (handle: string) => {
+    window.location.hash = `profile/${handle}`;
+  };
+
   // Show auth pages if not logged in
   if (!isAuthenticated || !user) {
     if (showSignup) {
@@ -340,6 +356,8 @@ export default function HomePage() {
         return <ModerationSettingsPage onBack={() => window.location.hash = 'settings'} />;
       case 'settings-add-account':
         return <AddAccountSettingsPage onBack={() => window.location.hash = 'settings'} />;
+      case 'post':
+        return <PostDetailPage postId={activePostId!} onBack={() => window.history.back()} onPostClick={handlePostClick} onAuthorClick={handleAuthorClick} token={token} onLike={handleLike} onRepost={handleRepost} onBookmark={handleBookmark} onReply={(post) => { setReplyTo(post); setComposerOpen(true); }} onQuote={(post) => { setQuotePost(post); setComposerOpen(true); }} />;
       case 'saved':
         return (
           <>
@@ -452,6 +470,8 @@ export default function HomePage() {
                 <Post
                   key={post.id}
                   post={post}
+                  onPostClick={handlePostClick}
+                  onAuthorClick={handleAuthorClick}
                   onLike={() => handleLike(post.id)}
                   onRepost={() => handleRepost(post.id)}
                   onBookmark={() => handleBookmark(post.id)}
@@ -550,6 +570,8 @@ export default function HomePage() {
                 <Post
                   key={post.id}
                   post={post}
+                  onPostClick={handlePostClick}
+                  onAuthorClick={handleAuthorClick}
                   onLike={() => handleLike(post.id)}
                   onRepost={() => handleRepost(post.id)}
                   onBookmark={() => handleBookmark(post.id)}
