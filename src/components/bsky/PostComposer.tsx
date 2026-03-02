@@ -431,7 +431,7 @@ export function PostComposer() {
                   "px-4 py-1.5 rounded-full text-[15px] font-medium transition-colors",
                   isValid && !isSubmitting
                     ? "bg-[#0085ff] text-white hover:bg-[#0070e0]"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
                 )}
               >
                 {isSubmitting ? 'Posting...' : 'Post'}

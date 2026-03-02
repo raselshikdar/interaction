@@ -59,10 +59,9 @@ function SidebarContent({ onNavigate, onClose }: SidebarContentProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
-      {/* User Profile Section - EXACT bsky sizes */}
+    <div className="flex flex-col h-full bg-background">
+      {/* User Profile Section */}
       <div className="p-4 pb-3">
-        {/* Avatar - 48px */}
         <button 
           onClick={() => handleNavClick('profile')}
           className="flex items-center gap-3 w-full text-left"
@@ -73,26 +72,24 @@ function SidebarContent({ onNavigate, onClose }: SidebarContentProps) {
           </Avatar>
         </button>
 
-        {/* Name & Handle - EXACT bsky sizes */}
         <div className="mt-2">
           <button 
             onClick={() => handleNavClick('profile')}
-            className="font-bold text-[18px] text-black leading-tight hover:underline"
+            className="font-bold text-[18px] text-foreground leading-tight hover:underline"
           >
             {user.displayName || user.handle}
           </button>
-          <p className="text-[14px] text-gray-500 mt-0.5">@{user.handle}</p>
+          <p className="text-[14px] text-muted-foreground mt-0.5">@{user.handle}</p>
         </div>
 
-        {/* Followers/Following Stats - EXACT bsky sizes */}
-        <div className="flex items-center gap-1 mt-2 text-[14px] text-gray-500">
+        <div className="flex items-center gap-1 mt-2 text-[14px] text-muted-foreground">
           <button className="hover:underline">
-            <span className="font-semibold text-black">{user.followersCount}</span>
+            <span className="font-semibold text-foreground">{user.followersCount}</span>
             <span className="ml-1">followers</span>
           </button>
           <span className="mx-1">·</span>
           <button className="hover:underline">
-            <span className="font-semibold text-black">{user.followingCount}</span>
+            <span className="font-semibold text-foreground">{user.followingCount}</span>
             <span className="ml-1">following</span>
           </button>
         </div>
@@ -100,7 +97,7 @@ function SidebarContent({ onNavigate, onClose }: SidebarContentProps) {
 
       <Separator className="mb-2" />
 
-      {/* Navigation Items - EXACT bsky sizes */}
+      {/* Navigation Items */}
       <nav className="flex-1 overflow-y-auto px-2">
         {navItems.map((item) => (
           <button
@@ -108,26 +105,26 @@ function SidebarContent({ onNavigate, onClose }: SidebarContentProps) {
             onClick={() => handleNavClick(item.id)}
             className={cn(
               'flex items-center gap-5 w-full px-4 py-3 text-left rounded-lg transition-colors',
-              'hover:bg-gray-100'
+              'hover:bg-accent'
             )}
           >
-            <item.icon className="h-6 w-6 text-black shrink-0" />
-            <span className="text-[16px] text-black">{item.label}</span>
+            <item.icon className="h-6 w-6 text-foreground shrink-0" />
+            <span className="text-[16px] text-foreground">{item.label}</span>
           </button>
         ))}
       </nav>
 
-      {/* Footer - EXACT bsky sizes */}
+      {/* Footer */}
       <div className="p-4 pt-2">
-        <div className="flex flex-col gap-2 text-[14px] text-gray-500 mb-3">
-          <a href="#" className="text-[#0085ff] hover:underline">Terms of Service</a>
-          <a href="#" className="text-[#0085ff] hover:underline">Privacy Policy</a>
+        <div className="flex flex-col gap-2 text-[14px] text-muted-foreground mb-3">
+          <a href="#" className="text-primary hover:underline">Terms of Service</a>
+          <a href="#" className="text-primary hover:underline">Privacy Policy</a>
         </div>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
             size="sm" 
-            className="text-gray-500 border-gray-200 rounded-full px-4 h-8 text-[14px]"
+            className="rounded-full px-4 h-8 text-[14px]"
           >
             <MessageSquare className="h-4 w-4 mr-1.5" />
             Feedback
@@ -135,7 +132,7 @@ function SidebarContent({ onNavigate, onClose }: SidebarContentProps) {
           <Button 
             variant="outline" 
             size="sm" 
-            className="text-gray-500 border-gray-200 rounded-full px-4 h-8 text-[14px]"
+            className="rounded-full px-4 h-8 text-[14px]"
           >
             <HelpCircle className="h-4 w-4 mr-1.5" />
             Help
@@ -169,7 +166,7 @@ export function MobileSidebar({
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-[280px] p-0 border-r border-gray-200">
+      <SheetContent side="left" className="w-[280px] p-0 border-r border-border bg-background">
         <SidebarContent onNavigate={onNavigate} onClose={() => onOpenChange(false)} />
       </SheetContent>
     </Sheet>

@@ -348,16 +348,16 @@ export function NotificationsPage() {
   return (
     <>
       {/* Header with Back Button */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => window.history.back()}
-              className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+              className="p-2 -ml-2 rounded-full hover:bg-accent"
             >
-              <ArrowLeft className="h-5 w-5 text-black" />
+              <ArrowLeft className="h-5 w-5 text-foreground" />
             </button>
-            <h1 className="text-[17px] font-semibold text-black">Notifications</h1>
+            <h1 className="text-[17px] font-semibold text-foreground">Notifications</h1>
           </div>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
@@ -385,7 +385,7 @@ export function NotificationsPage() {
       
       {/* Unread badge */}
       {unreadCount > 0 && (
-        <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
+          <div className="px-4 py-2 bg-muted border-b border-border">
           <Badge variant="secondary" className="text-xs rounded-full">
             {unreadCount} unread {unreadCount === 1 ? 'notification' : 'notifications'}
           </Badge>
