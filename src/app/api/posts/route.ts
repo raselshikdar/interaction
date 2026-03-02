@@ -1,207 +1,284 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server'
+import { v4 as uuidv4 } from 'uuid'
+import { sql } from '@/lib/db'
+import { getCurrentUser } from '@/lib/auth'
 
-// Helper to get current user from request
-async function getCurrentUser(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  const token = authHeader?.replace('Bearer ', '');
-
-  if (!token) return null;
-
-  const session = await db.session.findUnique({
-    where: { sessionToken: token },
-    include: { user: true }
-  });
-
-  if (!session || session.expires < new Date()) return null;
-
-  return session.user;
-}
-
-// GET - Fetch posts
-export async function GET(request: NextRequest) {
-  try {
-    const user = await getCurrentUser(request);
-    const { searchParams } = new URL(request.url);
-    const feed = searchParams.get('feed') || 'discover';
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const userId = searchParams.get('userId');
-    const search = searchParams.get('search');
-
-    const where: any = {
-      parentId: null // Only get root posts
-    };
-
-    if (userId) {
-      where.authorId = userId;
-    }
-
-    // Search functionality
-    if (search) {
-      where.OR = [
-        { content: { contains: search, mode: 'insensitive' } },
-        { content: { contains: `#${search}`, mode: 'insensitive' } },
-        { content: { contains: `#${search.replace(/\s+/g, '')}`, mode: 'insensitive' } }
-      ];
-    }
-
-    let orderBy: any = { createdAt: 'desc' };
-
-    if (feed === 'hot') {
-      orderBy = [
-        { likeCount: 'desc' },
-        { repostCount: 'desc' },
-        { createdAt: 'desc' }
-      ];
-    } else if (feed === 'following' && user) {
-      // Get following list
-      const follows = await db.follow.findMany({
-        where: { followerId: user.id },
-        select: { followingId: true }
-      });
-      
-      where.authorId = { in: [...follows.map(f => f.followingId), user.id] };
-    }
-
-    const posts = await db.post.findMany({
-      where,
-      include: {
-        author: true,
-        quotePost: {
-          include: { author: true }
-        },
-        likes: user ? {
-          where: { userId: user.id },
-          select: { id: true }
-        } : false,
-        reposts: user ? {
-          where: { userId: user.id },
-          select: { id: true }
-        } : false,
-        bookmarks: user ? {
-          where: { userId: user.id },
-          select: { id: true }
-        } : false
-      },
-      orderBy,
-      skip: (page - 1) * limit,
-      take: limit
-    });
-
-    const formattedPosts = posts.map(post => ({
-      id: post.id,
-      content: post.content,
-      images: post.images ? JSON.parse(post.images) : null,
-      video: post.video,
-      link: post.link,
-      linkCard: post.linkCard ? JSON.parse(post.linkCard) : null,
-      authorId: post.authorId,
-      parentId: post.parentId,
-      replyCount: post.replyCount,
-      repostCount: post.repostCount,
-      likeCount: post.likeCount,
-      bookmarkCount: post.bookmarkCount,
-      isPinned: post.isPinned,
-      isReply: post.isReply,
-      quotePostId: post.quotePostId,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString(),
-      author: {
-        id: post.author.id,
-        email: post.author.email,
-        handle: post.author.handle,
-        displayName: post.author.displayName,
-        avatar: post.author.avatar,
-        banner: post.author.banner,
-        bio: post.author.bio,
-        website: post.author.website,
-        verified: post.author.verified,
-        followersCount: post.author.followersCount,
-        followingCount: post.author.followingCount,
-        postsCount: post.author.postsCount,
-        createdAt: post.author.createdAt.toISOString(),
-        updatedAt: post.author.updatedAt.toISOString()
-      },
-      quotePost: post.quotePost ? {
-        id: post.quotePost.id,
-        content: post.quotePost.content,
-        author: {
-          id: post.quotePost.author.id,
-          handle: post.quotePost.author.handle,
-          displayName: post.quotePost.author.displayName,
-          avatar: post.quotePost.author.avatar,
-          verified: post.quotePost.author.verified
-        }
-      } : null,
-      isLiked: user ? (post as any).likes?.length > 0 : false,
-      isReposted: user ? (post as any).reposts?.length > 0 : false,
-      isBookmarked: user ? (post as any).bookmarks?.length > 0 : false
-    }));
-
-    return NextResponse.json({ posts: formattedPosts });
-  } catch (error) {
-    console.error('Fetch posts error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+function formatUser(u: Record<string, unknown>) {
+  return {
+    id: u.id,
+    email: u.email,
+    handle: u.handle,
+    displayName: u.display_name,
+    avatar: u.avatar,
+    banner: u.banner,
+    bio: u.bio,
+    website: u.website,
+    verified: u.verified,
+    followersCount: u.followers_count,
+    followingCount: u.following_count,
+    postsCount: u.posts_count,
+    createdAt: u.author_created_at ?? u.created_at,
+    updatedAt: u.author_updated_at ?? u.updated_at,
   }
 }
 
-// POST - Create a post
+function formatPost(p: Record<string, unknown>) {
+  return {
+    id: p.id,
+    content: p.content,
+    images: p.images ? JSON.parse(p.images as string) : null,
+    video: p.video,
+    link: p.link,
+    linkCard: p.link_card ? JSON.parse(p.link_card as string) : null,
+    authorId: p.author_id,
+    parentId: p.parent_id,
+    replyCount: p.reply_count,
+    repostCount: p.repost_count,
+    likeCount: p.like_count,
+    bookmarkCount: p.bookmark_count,
+    isPinned: p.is_pinned,
+    isReply: p.is_reply,
+    quotePostId: p.quote_post_id,
+    createdAt: p.created_at,
+    updatedAt: p.updated_at,
+    author: {
+      id: p.author_id,
+      email: p.author_email,
+      handle: p.author_handle,
+      displayName: p.author_display_name,
+      avatar: p.author_avatar,
+      banner: p.author_banner,
+      bio: p.author_bio,
+      website: p.author_website,
+      verified: p.author_verified,
+      followersCount: p.author_followers_count,
+      followingCount: p.author_following_count,
+      postsCount: p.author_posts_count,
+      createdAt: p.author_created_at,
+      updatedAt: p.author_updated_at,
+    },
+    quotePost: p.quote_id
+      ? {
+          id: p.quote_id,
+          content: p.quote_content,
+          author: {
+            id: p.quote_author_id,
+            handle: p.quote_author_handle,
+            displayName: p.quote_author_display_name,
+            avatar: p.quote_author_avatar,
+            verified: p.quote_author_verified,
+          },
+        }
+      : null,
+    isLiked: p.is_liked ?? false,
+    isReposted: p.is_reposted ?? false,
+    isBookmarked: p.is_bookmarked ?? false,
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const user = await getCurrentUser(request)
+    const { searchParams } = new URL(request.url)
+    const feed = searchParams.get('feed') || 'discover'
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '20')
+    const userId = searchParams.get('userId')
+    const search = searchParams.get('search')
+    const offset = (page - 1) * limit
+
+    let posts: Record<string, unknown>[]
+
+    if (feed === 'hot') {
+      posts = await sql`
+        SELECT
+          p.*,
+          u.email AS author_email, u.handle AS author_handle, u.display_name AS author_display_name,
+          u.avatar AS author_avatar, u.banner AS author_banner, u.bio AS author_bio,
+          u.website AS author_website, u.verified AS author_verified,
+          u.followers_count AS author_followers_count, u.following_count AS author_following_count,
+          u.posts_count AS author_posts_count, u.created_at AS author_created_at,
+          u.updated_at AS author_updated_at,
+          qp.id AS quote_id, qp.content AS quote_content,
+          qu.id AS quote_author_id, qu.handle AS quote_author_handle,
+          qu.display_name AS quote_author_display_name, qu.avatar AS quote_author_avatar,
+          qu.verified AS quote_author_verified,
+          ${user ? sql`
+            (EXISTS (SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ${user.id})) AS is_liked,
+            (EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = p.id AND r.user_id = ${user.id})) AS is_reposted,
+            (EXISTS (SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ${user.id})) AS is_bookmarked
+          ` : sql`false AS is_liked, false AS is_reposted, false AS is_bookmarked`}
+        FROM posts p
+        JOIN users u ON u.id = p.author_id
+        LEFT JOIN posts qp ON qp.id = p.quote_post_id
+        LEFT JOIN users qu ON qu.id = qp.author_id
+        WHERE p.parent_id IS NULL
+        ORDER BY p.like_count DESC, p.repost_count DESC, p.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+    } else if (feed === 'following' && user) {
+      posts = await sql`
+        SELECT
+          p.*,
+          u.email AS author_email, u.handle AS author_handle, u.display_name AS author_display_name,
+          u.avatar AS author_avatar, u.banner AS author_banner, u.bio AS author_bio,
+          u.website AS author_website, u.verified AS author_verified,
+          u.followers_count AS author_followers_count, u.following_count AS author_following_count,
+          u.posts_count AS author_posts_count, u.created_at AS author_created_at,
+          u.updated_at AS author_updated_at,
+          qp.id AS quote_id, qp.content AS quote_content,
+          qu.id AS quote_author_id, qu.handle AS quote_author_handle,
+          qu.display_name AS quote_author_display_name, qu.avatar AS quote_author_avatar,
+          qu.verified AS quote_author_verified,
+          (EXISTS (SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ${user.id})) AS is_liked,
+          (EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = p.id AND r.user_id = ${user.id})) AS is_reposted,
+          (EXISTS (SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ${user.id})) AS is_bookmarked
+        FROM posts p
+        JOIN users u ON u.id = p.author_id
+        LEFT JOIN posts qp ON qp.id = p.quote_post_id
+        LEFT JOIN users qu ON qu.id = qp.author_id
+        WHERE p.parent_id IS NULL
+          AND p.author_id IN (
+            SELECT following_id FROM follows WHERE follower_id = ${user.id}
+            UNION SELECT ${user.id}
+          )
+        ORDER BY p.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+    } else if (userId) {
+      posts = await sql`
+        SELECT
+          p.*,
+          u.email AS author_email, u.handle AS author_handle, u.display_name AS author_display_name,
+          u.avatar AS author_avatar, u.banner AS author_banner, u.bio AS author_bio,
+          u.website AS author_website, u.verified AS author_verified,
+          u.followers_count AS author_followers_count, u.following_count AS author_following_count,
+          u.posts_count AS author_posts_count, u.created_at AS author_created_at,
+          u.updated_at AS author_updated_at,
+          qp.id AS quote_id, qp.content AS quote_content,
+          qu.id AS quote_author_id, qu.handle AS quote_author_handle,
+          qu.display_name AS quote_author_display_name, qu.avatar AS quote_author_avatar,
+          qu.verified AS quote_author_verified,
+          ${user ? sql`
+            (EXISTS (SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ${user.id})) AS is_liked,
+            (EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = p.id AND r.user_id = ${user.id})) AS is_reposted,
+            (EXISTS (SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ${user.id})) AS is_bookmarked
+          ` : sql`false AS is_liked, false AS is_reposted, false AS is_bookmarked`}
+        FROM posts p
+        JOIN users u ON u.id = p.author_id
+        LEFT JOIN posts qp ON qp.id = p.quote_post_id
+        LEFT JOIN users qu ON qu.id = qp.author_id
+        WHERE p.parent_id IS NULL AND p.author_id = ${userId}
+        ORDER BY p.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+    } else if (search) {
+      posts = await sql`
+        SELECT
+          p.*,
+          u.email AS author_email, u.handle AS author_handle, u.display_name AS author_display_name,
+          u.avatar AS author_avatar, u.banner AS author_banner, u.bio AS author_bio,
+          u.website AS author_website, u.verified AS author_verified,
+          u.followers_count AS author_followers_count, u.following_count AS author_following_count,
+          u.posts_count AS author_posts_count, u.created_at AS author_created_at,
+          u.updated_at AS author_updated_at,
+          qp.id AS quote_id, qp.content AS quote_content,
+          qu.id AS quote_author_id, qu.handle AS quote_author_handle,
+          qu.display_name AS quote_author_display_name, qu.avatar AS quote_author_avatar,
+          qu.verified AS quote_author_verified,
+          ${user ? sql`
+            (EXISTS (SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ${user.id})) AS is_liked,
+            (EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = p.id AND r.user_id = ${user.id})) AS is_reposted,
+            (EXISTS (SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ${user.id})) AS is_bookmarked
+          ` : sql`false AS is_liked, false AS is_reposted, false AS is_bookmarked`}
+        FROM posts p
+        JOIN users u ON u.id = p.author_id
+        LEFT JOIN posts qp ON qp.id = p.quote_post_id
+        LEFT JOIN users qu ON qu.id = qp.author_id
+        WHERE p.parent_id IS NULL
+          AND p.content ILIKE ${'%' + search + '%'}
+        ORDER BY p.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+    } else {
+      posts = await sql`
+        SELECT
+          p.*,
+          u.email AS author_email, u.handle AS author_handle, u.display_name AS author_display_name,
+          u.avatar AS author_avatar, u.banner AS author_banner, u.bio AS author_bio,
+          u.website AS author_website, u.verified AS author_verified,
+          u.followers_count AS author_followers_count, u.following_count AS author_following_count,
+          u.posts_count AS author_posts_count, u.created_at AS author_created_at,
+          u.updated_at AS author_updated_at,
+          qp.id AS quote_id, qp.content AS quote_content,
+          qu.id AS quote_author_id, qu.handle AS quote_author_handle,
+          qu.display_name AS quote_author_display_name, qu.avatar AS quote_author_avatar,
+          qu.verified AS quote_author_verified,
+          ${user ? sql`
+            (EXISTS (SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ${user.id})) AS is_liked,
+            (EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = p.id AND r.user_id = ${user.id})) AS is_reposted,
+            (EXISTS (SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ${user.id})) AS is_bookmarked
+          ` : sql`false AS is_liked, false AS is_reposted, false AS is_bookmarked`}
+        FROM posts p
+        JOIN users u ON u.id = p.author_id
+        LEFT JOIN posts qp ON qp.id = p.quote_post_id
+        LEFT JOIN users qu ON qu.id = qp.author_id
+        WHERE p.parent_id IS NULL
+        ORDER BY p.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+    }
+
+    return NextResponse.json({ posts: posts.map(formatPost) })
+  } catch (error) {
+    console.error('Fetch posts error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser(request);
-
+    const user = await getCurrentUser(request)
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json();
-    const { content, images, parentId, quotePostId } = body;
+    const body = await request.json()
+    const { content, images, parentId, quotePostId } = body
 
-    // Allow posts with either content OR images
     if (!content?.trim() && (!images || images.length === 0)) {
-      return NextResponse.json(
-        { error: 'Post must have content or images' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Post must have content or images' }, { status: 400 })
     }
 
-    const post = await db.post.create({
-      data: {
-        content: content?.trim() || '',
-        images: images && images.length > 0 ? JSON.stringify(images) : null,
-        authorId: user.id,
-        parentId: parentId || null,
-        quotePostId: quotePostId || null,
-        isReply: !!parentId
-      },
-      include: {
-        author: true,
-        quotePost: {
-          include: { author: true }
-        }
-      }
-    });
+    const postId = uuidv4()
 
-    // Update user's post count
-    await db.user.update({
-      where: { id: user.id },
-      data: { postsCount: { increment: 1 } }
-    });
+    const [post] = await sql`
+      INSERT INTO posts (id, content, images, author_id, parent_id, quote_post_id, is_reply)
+      VALUES (
+        ${postId},
+        ${content?.trim() || ''},
+        ${images && images.length > 0 ? JSON.stringify(images) : null},
+        ${user.id},
+        ${parentId ?? null},
+        ${quotePostId ?? null},
+        ${!!parentId}
+      )
+      RETURNING *
+    `
 
-    // If it's a reply, update reply count
+    // Update user post count
+    await sql`UPDATE users SET posts_count = posts_count + 1 WHERE id = ${user.id}`
+
+    // Update parent reply count
     if (parentId) {
-      await db.post.update({
-        where: { id: parentId },
-        data: { replyCount: { increment: 1 } }
-      });
+      await sql`UPDATE posts SET reply_count = reply_count + 1 WHERE id = ${parentId}`
     }
+
+    const [author] = await sql`
+      SELECT id, email, handle, display_name, avatar, banner, bio, website,
+             verified, followers_count, following_count, posts_count, created_at, updated_at
+      FROM users WHERE id = ${user.id}
+    `
 
     return NextResponse.json({
       post: {
@@ -210,41 +287,26 @@ export async function POST(request: NextRequest) {
         images: post.images ? JSON.parse(post.images) : null,
         video: post.video,
         link: post.link,
-        linkCard: post.linkCard ? JSON.parse(post.linkCard) : null,
-        authorId: post.authorId,
-        parentId: post.parentId,
-        replyCount: post.replyCount,
-        repostCount: post.repostCount,
-        likeCount: post.likeCount,
-        bookmarkCount: post.bookmarkCount,
-        isPinned: post.isPinned,
-        isReply: post.isReply,
-        quotePostId: post.quotePostId,
-        createdAt: post.createdAt.toISOString(),
-        updatedAt: post.updatedAt.toISOString(),
-        author: {
-          id: post.author.id,
-          email: post.author.email,
-          handle: post.author.handle,
-          displayName: post.author.displayName,
-          avatar: post.author.avatar,
-          banner: post.author.banner,
-          bio: post.author.bio,
-          website: post.author.website,
-          verified: post.author.verified,
-          followersCount: post.author.followersCount,
-          followingCount: post.author.followingCount,
-          postsCount: post.author.postsCount,
-          createdAt: post.author.createdAt.toISOString(),
-          updatedAt: post.author.updatedAt.toISOString()
-        }
-      }
-    });
+        linkCard: post.link_card ? JSON.parse(post.link_card) : null,
+        authorId: post.author_id,
+        parentId: post.parent_id,
+        replyCount: post.reply_count,
+        repostCount: post.repost_count,
+        likeCount: post.like_count,
+        bookmarkCount: post.bookmark_count,
+        isPinned: post.is_pinned,
+        isReply: post.is_reply,
+        quotePostId: post.quote_post_id,
+        createdAt: post.created_at,
+        updatedAt: post.updated_at,
+        author: formatUser(author),
+        isLiked: false,
+        isReposted: false,
+        isBookmarked: false,
+      },
+    })
   } catch (error) {
-    console.error('Create post error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Create post error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

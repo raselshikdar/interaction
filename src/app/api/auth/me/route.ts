@@ -1,75 +1,56 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server'
+import { sql } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   try {
-    // Get token from Authorization header or cookie
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '') || 
-                  request.cookies.get('token')?.value;
+    const authHeader = request.headers.get('authorization')
+    const token =
+      authHeader?.replace('Bearer ', '') || request.cookies.get('token')?.value
 
     if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Find session
-    const session = await db.session.findUnique({
-      where: { sessionToken: token },
-      include: { user: true }
-    });
+    const rows = await sql`
+      SELECT
+        u.id, u.email, u.handle, u.display_name, u.avatar, u.banner,
+        u.bio, u.website, u.verified, u.followers_count, u.following_count,
+        u.posts_count, u.created_at, u.updated_at,
+        s.expires
+      FROM sessions s
+      JOIN users u ON u.id = s.user_id
+      WHERE s.session_token = ${token} AND s.expires > NOW()
+      LIMIT 1
+    `
 
-    if (!session || session.expires < new Date()) {
-      return NextResponse.json(
-        { error: 'Session expired' },
-        { status: 401 }
-      );
+    if (!rows.length) {
+      return NextResponse.json({ error: 'Session expired' }, { status: 401 })
     }
+
+    const u = rows[0]
 
     return NextResponse.json({
       user: {
-        id: session.user.id,
-        email: session.user.email,
-        handle: session.user.handle,
-        displayName: session.user.displayName,
-        avatar: session.user.avatar,
-        banner: session.user.banner,
-        bio: session.user.bio,
-        website: session.user.website,
-        verified: session.user.verified,
-        followersCount: session.user.followersCount,
-        followingCount: session.user.followingCount,
-        postsCount: session.user.postsCount,
-        createdAt: session.user.createdAt.toISOString(),
-        updatedAt: session.user.updatedAt.toISOString()
+        id: u.id,
+        email: u.email,
+        handle: u.handle,
+        displayName: u.display_name,
+        avatar: u.avatar,
+        banner: u.banner,
+        bio: u.bio,
+        website: u.website,
+        verified: u.verified,
+        followersCount: u.followers_count,
+        followingCount: u.following_count,
+        postsCount: u.posts_count,
+        createdAt: u.created_at,
+        updatedAt: u.updated_at,
       },
-      token
-    });
+      token,
+    })
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('[v0] Auth check error:', errorMessage);
-    console.error('[v0] Full error:', error);
-    
-    // Provide more specific error messages for debugging
-    if (errorMessage.includes('ECONNREFUSED')) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-    
-    if (errorMessage.includes('relation') || errorMessage.includes('does not exist')) {
-      return NextResponse.json(
-        { error: 'Database schema not initialized' },
-        { status: 500 }
-      );
-    }
-    
-    return NextResponse.json(
-      { error: 'Internal server error', details: errorMessage },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : String(error)
+    console.error('[v0] Auth check error:', msg)
+    return NextResponse.json({ error: 'Internal server error', details: msg }, { status: 500 })
   }
 }
