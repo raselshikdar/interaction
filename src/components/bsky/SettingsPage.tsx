@@ -64,7 +64,8 @@ export function SettingsPage({ onBack, onNavigate }: SettingsPageProps) {
     if (onNavigate) {
       onNavigate(view);
     } else {
-      window.location.hash = view;
+      window.history.pushState(null, '', `/${view}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   }, [onNavigate]);
 
@@ -72,7 +73,7 @@ export function SettingsPage({ onBack, onNavigate }: SettingsPageProps) {
     if (onBack) {
       onBack();
     } else {
-      window.location.hash = 'home';
+      window.history.back();
     }
   }, [onBack]);
 
@@ -80,8 +81,7 @@ export function SettingsPage({ onBack, onNavigate }: SettingsPageProps) {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       logout();
-      window.location.hash = '';
-      window.location.reload();
+      window.location.href = '/';
     } catch (error) {
       console.error('Sign out error:', error);
     }

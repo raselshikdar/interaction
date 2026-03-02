@@ -64,12 +64,13 @@ function renderContent(
       parts.push(
         <a
           key={key++}
-          href={`#search/${encodeURIComponent(tag)}`}
+          href={`/search/${encodeURIComponent(tag)}`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onHashtagClick?.(tag);
-            window.location.hash = `search/${encodeURIComponent(tag)}`;
+            window.history.pushState(null, '', `/search/${encodeURIComponent(tag)}`);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }}
           className="text-[#0085ff] hover:underline"
         >
@@ -81,12 +82,13 @@ function renderContent(
       parts.push(
         <a
           key={key++}
-          href={`#profile/${handle}`}
+          href={`/profile/${handle}`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onMentionClick?.(handle);
-            window.location.hash = `profile/${handle}`;
+            window.history.pushState(null, '', `/profile/${handle}`);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }}
           className="text-[#0085ff] hover:underline"
         >
@@ -184,7 +186,8 @@ export function Post({
     if (onAuthorClick) {
       onAuthorClick(post.author.handle);
     } else {
-      window.location.hash = `profile/${post.author.handle}`;
+      window.history.pushState(null, '', `/profile/${post.author.handle}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 
@@ -192,7 +195,8 @@ export function Post({
     if (onPostClick) {
       onPostClick(post.id);
     } else {
-      window.location.hash = `post/${post.id}`;
+      window.history.pushState(null, '', `/post/${post.id}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 
@@ -329,7 +333,7 @@ export function Post({
               onClick={(e) => {
                 e.stopPropagation();
                 if (onPostClick) onPostClick(post.quotePost!.id);
-                else window.location.hash = `post/${post.quotePost!.id}`;
+                else { window.history.pushState(null, '', `/post/${post.quotePost!.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }
               }}
             >
               <div className="flex items-center gap-2">

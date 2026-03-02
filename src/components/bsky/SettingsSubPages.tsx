@@ -128,7 +128,7 @@ function SettingsHeader({ title, onBack }: { title: string; onBack?: () => void 
     if (onBack) {
       onBack();
     } else {
-      window.location.hash = 'settings';
+      window.history.back();
     }
   };
   
@@ -513,8 +513,7 @@ export function AccountSettingsPage({ onBack }: { onBack?: () => void }) {
       
       if (response.ok) {
         logout();
-        window.location.hash = '';
-        window.location.reload();
+        window.location.href = '/';
       } else {
         setMessage({ type: 'error', text: 'Failed to delete account' });
       }
@@ -1541,7 +1540,7 @@ export function ModerationSettingsPage({ onBack }: { onBack?: () => void }) {
         <SettingsNavItem
           label="Content Filters"
           description="Filter sensitive content"
-          onClick={() => window.location.hash = 'settings-content'}
+          onClick={() => { window.history.pushState(null, '', '/settings-content'); window.dispatchEvent(new PopStateEvent('popstate')); }}
         />
         
         <SettingsNavItem
@@ -1562,13 +1561,13 @@ export function ModerationSettingsPage({ onBack }: { onBack?: () => void }) {
         <SettingsNavItem
           label="Blocked Accounts"
           description="Manage blocked accounts"
-          onClick={() => window.location.hash = 'settings-privacy'}
+          onClick={() => { window.history.pushState(null, '', '/settings-privacy'); window.dispatchEvent(new PopStateEvent('popstate')); }}
         />
         
         <SettingsNavItem
           label="Muted Accounts"
           description="Manage muted accounts"
-          onClick={() => window.location.hash = 'settings-privacy'}
+          onClick={() => { window.history.pushState(null, '', '/settings-privacy'); window.dispatchEvent(new PopStateEvent('popstate')); }}
         />
       </div>
     </div>
@@ -1600,8 +1599,7 @@ export function AddAccountSettingsPage({ onBack }: { onBack?: () => void }) {
 
       if (response.ok) {
         // Store new session and reload to switch accounts
-        window.location.hash = '';
-        window.location.reload();
+        window.location.href = '/';
       } else {
         setError(data.error || 'Failed to sign in');
       }
@@ -1692,8 +1690,7 @@ export function AddAccountSettingsPage({ onBack }: { onBack?: () => void }) {
         <button
           onClick={() => {
             logout();
-            window.location.hash = '';
-            window.location.reload();
+            window.location.href = '/';
           }}
           className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 transition-colors"
         >

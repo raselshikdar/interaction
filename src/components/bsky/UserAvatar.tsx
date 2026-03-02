@@ -44,7 +44,7 @@ export function UserAvatar({
 
   if (!showName && !showHandle && !showFollowButton) {
     if (linkToProfile) {
-      return <Link href={`#profile/${user.handle}`}>{avatar}</Link>;
+      return <Link href={`/profile/${user.handle}`}>{avatar}</Link>;
     }
     return avatar;
   }
@@ -52,16 +52,16 @@ export function UserAvatar({
   return (
     <div className="flex items-center gap-3">
       {linkToProfile ? (
-        <Link href={`#profile/${user.handle}`}>{avatar}</Link>
+        <Link href={`/profile/${user.handle}`}>{avatar}</Link>
       ) : (
         avatar
       )}
       <div className="flex-1 min-w-0">
         {linkToProfile ? (
-          <Link href={`#profile/${user.handle}`}>
-            <p className="font-semibold text-[15px] text-black truncate hover:underline">{user.displayName || user.handle}</p>
+          <Link href={`/profile/${user.handle}`}>
+            <p className="font-semibold text-[15px] text-foreground truncate hover:underline">{user.displayName || user.handle}</p>
             {showHandle && (
-              <p className="text-[14px] text-gray-500 truncate">@{user.handle}</p>
+              <p className="text-[14px] text-muted-foreground truncate">@{user.handle}</p>
             )}
           </Link>
         ) : (

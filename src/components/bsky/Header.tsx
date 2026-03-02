@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Menu, ArrowLeft, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,8 +38,7 @@ export function Header({
   const router = useRouter();
 
   const handleFeedsClick = () => {
-    // Set hash and trigger navigation
-    window.location.hash = 'feeds';
+    router.push('/feeds');
   };
 
   return (
@@ -65,12 +63,10 @@ export function Header({
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-10 w-10 rounded-full hover:bg-gray-100 p-0"
-            asChild
+            className="h-10 w-10 rounded-full hover:bg-muted p-0"
+            onClick={() => router.back()}
           >
-            <Link href="#">
-              <ArrowLeft className="size-6 text-black" />
-            </Link>
+            <ArrowLeft className="size-6 text-foreground" />
           </Button>
         )}
       </div>
@@ -80,9 +76,9 @@ export function Header({
         {title ? (
           <h1 className="text-[17px] font-semibold text-black truncate">{title}</h1>
         ) : (
-          <Link href="#home">
+          <button onClick={() => router.push('/')} className="flex items-center justify-center">
             <SmileyLogo className="size-8 text-[#0085ff]" />
-          </Link>
+          </button>
         )}
       </div>
 
