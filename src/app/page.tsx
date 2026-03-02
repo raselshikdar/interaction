@@ -238,9 +238,9 @@ export default function HomePage() {
       return <SignupPage />;
     }
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200">
+        <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 bg-background border-b border-border">
           <div className="flex items-center gap-2">
             <svg viewBox="0 0 24 24" className="h-8 w-8 text-[#0085ff]" fill="currentColor">
               <circle cx="12" cy="12" r="10" fill="currentColor"/>
@@ -269,7 +269,7 @@ export default function HomePage() {
 
         {/* Landing Page */}
         <main className="flex-1">
-          <section className="py-20 px-4 text-center bg-white">
+          <section className="py-20 px-4 text-center bg-background">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">
                 Your home for{' '}
@@ -343,15 +343,15 @@ export default function HomePage() {
       case 'saved':
         return (
           <>
-            <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
+            <div className="sticky top-0 z-20 bg-background border-b border-border">
               <div className="flex items-center gap-3 px-4 py-3">
                 <button
                   onClick={() => window.location.hash = 'home'}
-                  className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+                  className="p-2 -ml-2 rounded-full hover:bg-muted"
                 >
-                  <ArrowLeft className="h-5 w-5 text-black" />
+                  <ArrowLeft className="h-5 w-5 text-foreground" />
                 </button>
-                <h1 className="text-[17px] font-semibold text-black">Saved Posts</h1>
+                <h1 className="text-[17px] font-semibold text-foreground">Saved Posts</h1>
               </div>
             </div>
             <div className="p-4">
@@ -394,15 +394,15 @@ export default function HomePage() {
       case 'lists':
         return (
           <>
-            <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
+            <div className="sticky top-0 z-20 bg-background border-b border-border">
               <div className="flex items-center gap-3 px-4 py-3">
                 <button
                   onClick={() => window.location.hash = 'home'}
-                  className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+                  className="p-2 -ml-2 rounded-full hover:bg-muted"
                 >
-                  <ArrowLeft className="h-5 w-5 text-black" />
+                  <ArrowLeft className="h-5 w-5 text-foreground" />
                 </button>
-                <h1 className="text-[17px] font-semibold text-black">My Lists</h1>
+                <h1 className="text-[17px] font-semibold text-foreground">My Lists</h1>
               </div>
             </div>
             <div className="p-4">
@@ -418,15 +418,15 @@ export default function HomePage() {
         return (
           <>
             {/* Search Header */}
-            <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 py-3">
+            <div className="sticky top-0 z-20 bg-background border-b border-border px-4 py-3">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => window.location.hash = 'home'}
-                  className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+                  className="p-2 -ml-2 rounded-full hover:bg-muted"
                 >
-                  <ArrowLeft className="h-5 w-5 text-black" />
+                  <ArrowLeft className="h-5 w-5 text-foreground" />
                 </button>
-                <h1 className="text-[17px] font-semibold text-black">#{searchTopic}</h1>
+                <h1 className="text-[17px] font-semibold text-foreground">#{searchTopic}</h1>
               </div>
             </div>
 
@@ -497,20 +497,20 @@ export default function HomePage() {
             )}
 
             {/* Post Composer - EXACT bsky one-line style */}
-            <div className="border-b border-gray-200 px-4 py-3">
+            <div className="border-b border-border px-4 py-3">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 rounded-full shrink-0">
                   <AvatarImage src={user.avatar || undefined} />
                   <AvatarFallback>{(user.displayName || user.handle)[0].toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <button 
-                  className="flex-1 text-left text-gray-500 text-[15px] hover:text-gray-700 transition-colors"
+                  className="flex-1 text-left text-muted-foreground text-[15px] hover:text-foreground transition-colors"
                   onClick={() => setComposerOpen(true)}
                 >
                   What's up?
                 </button>
                 <button 
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-[#0085ff]"
+                  className="p-2 rounded-full hover:bg-muted transition-colors text-[#0085ff]"
                   onClick={() => setComposerOpen(true)}
                 >
                   <ImageIcon className="h-5 w-5" />

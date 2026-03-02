@@ -410,11 +410,11 @@ export function PostComposer() {
           <div className="absolute inset-0 bg-black/30" onClick={handleClose} />
           
           <div 
-            className="absolute top-0 left-0 right-0 bg-white shadow-2xl animate-slide-up"
+            className="absolute top-[8vh] left-0 right-0 bg-background shadow-2xl animate-slide-up rounded-b-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <button onClick={handleClose} className="text-[#0085ff] text-[15px] font-medium hover:opacity-70">
                 Cancel
               </button>
@@ -440,7 +440,7 @@ export function PostComposer() {
 
             {/* Repost indicator */}
             {isRepost && (
-              <div className="px-4 py-2 bg-gray-50 flex items-center gap-2 text-[13px] text-gray-600">
+              <div className="px-4 py-2 bg-muted flex items-center gap-2 text-[13px] text-muted-foreground">
                 <Repeat2 className="h-4 w-4" />
                 <span>This is a repost with quote</span>
                 <button 
@@ -454,7 +454,7 @@ export function PostComposer() {
 
             {/* Reply/Quote context */}
             {replyTo && (
-              <div className="px-4 pt-3 flex items-center gap-2 text-[14px] text-gray-500">
+              <div className="px-4 pt-3 flex items-center gap-2 text-[14px] text-muted-foreground">
                 <span>Replying to</span>
                 <span className="text-[#0085ff]">@{replyTo.author.handle}</span>
                 <button onClick={() => setReplyTo(null)} className="ml-auto p-1 hover:bg-gray-100 rounded-full">
@@ -465,7 +465,7 @@ export function PostComposer() {
 
             {quotePost && (
               <div className="px-4 pt-3">
-                <div className="border border-gray-200 rounded-lg p-2.5 relative bg-gray-50">
+                  <div className="border border-border rounded-lg p-2.5 relative bg-muted">
                   <button 
                     onClick={() => setQuotePost(null)}
                     className="absolute right-2 top-2 p-1 hover:bg-gray-200 rounded-full"
@@ -479,7 +479,7 @@ export function PostComposer() {
                     </Avatar>
                     <span className="text-[13px] font-medium">{quotePost.author.displayName || quotePost.author.handle}</span>
                   </div>
-                  <p className="text-[13px] text-gray-600 mt-1 line-clamp-3">{quotePost.content}</p>
+                  <p className="text-[13px] text-muted-foreground mt-1 line-clamp-3">{quotePost.content}</p>
                   {quotePost.images && quotePost.images[0] && (
                     <img src={quotePost.images[0]} alt="" className="mt-2 rounded max-h-32 object-cover" />
                   )}
@@ -505,7 +505,7 @@ export function PostComposer() {
                       placeholder="What's up?"
                       value={content}
                       onChange={handleTextChange}
-                      className="w-full border-0 resize-none text-[16px] text-black placeholder:text-gray-400 focus:outline-none min-h-[80px] leading-[1.4] bg-transparent"
+                      className="w-full border-0 resize-none text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none min-h-[80px] leading-[1.4] bg-transparent"
                       maxLength={maxLength}
                       rows={3}
                     />
@@ -513,20 +513,20 @@ export function PostComposer() {
 
                   {/* Mention autocomplete dropdown */}
                   {showMentions && mentionUsers.length > 0 && (
-                    <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-background border border-border rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
                       {mentionUsers.map((u) => (
                         <button
                           key={u.id}
                           onClick={() => insertMention(u.handle)}
-                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left"
+                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-muted text-left"
                         >
                           <Avatar className="h-8 w-8 rounded-full">
                             <AvatarImage src={u.avatar || undefined} />
                             <AvatarFallback>{u.handle[0].toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="text-[14px] font-medium text-black">{u.displayName || u.handle}</div>
-                            <div className="text-[12px] text-gray-500">@{u.handle}</div>
+                            <div className="text-[14px] font-medium text-foreground">{u.displayName || u.handle}</div>
+                            <div className="text-[12px] text-muted-foreground">@{u.handle}</div>
                           </div>
                         </button>
                       ))}
@@ -535,9 +535,9 @@ export function PostComposer() {
 
                   {/* Detected URL preview */}
                   {detectedUrl && (
-                    <div className="mt-2 p-2 bg-gray-50 rounded-lg flex items-center gap-2">
+                    <div className="mt-2 p-2 bg-muted rounded-lg flex items-center gap-2">
                       <Link2 className="h-4 w-4 text-gray-400" />
-                      <span className="text-[13px] text-gray-600 truncate flex-1">{detectedUrl}</span>
+                      <span className="text-[13px] text-muted-foreground truncate flex-1">{detectedUrl}</span>
                       <button 
                         onClick={() => setDetectedUrl(null)}
                         className="text-gray-400 hover:text-gray-600"
@@ -589,10 +589,10 @@ export function PostComposer() {
             </div>
 
             {/* Visibility settings row */}
-            <div className="px-4 py-2 border-t border-gray-100">
+            <div className="px-4 py-2 border-t border-border">
               <Popover open={showVisibilityMenu} onOpenChange={setShowVisibilityMenu}>
                 <PopoverTrigger asChild>
-                  <button className="flex items-center gap-1 text-[13px] text-gray-500 hover:text-gray-700">
+                  <button className="flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground">
                     <Globe className="h-4 w-4" />
                     <span>{currentVisibility.label}</span>
                     <ChevronDown className="h-3.5 w-3.5" />
@@ -621,7 +621,7 @@ export function PostComposer() {
             </div>
 
             {/* Bottom toolbar */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-t border-gray-100">
+            <div className="flex items-center justify-between px-4 py-2.5 border-t border-border">
               <div className="flex items-center gap-0.5">
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -711,7 +711,7 @@ export function PostComposer() {
                 <div className="flex items-center gap-1.5">
                   <span className={cn(
                     'text-[14px]',
-                    remaining < 0 ? 'text-red-500' : remaining <= 20 ? 'text-orange-500' : 'text-black'
+                    remaining < 0 ? 'text-red-500' : remaining <= 20 ? 'text-orange-500' : 'text-foreground'
                   )}>
                     {remaining}
                   </span>

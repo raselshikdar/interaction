@@ -36,22 +36,22 @@ function SettingsItem({ icon, label, onClick, isDestructive }: SettingsItemProps
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-gray-50 transition-colors"
+      className="w-full flex items-center gap-4 px-4 py-3.5 hover:bg-muted transition-colors"
     >
       <div className={cn(
         "flex items-center justify-center w-6 h-6",
-        isDestructive ? "text-red-500" : "text-black"
+        isDestructive ? "text-red-500" : "text-foreground"
       )}>
         {icon}
       </div>
       <span className={cn(
         "flex-1 text-left text-[15px]",
-        isDestructive ? "text-red-500" : "text-black"
+        isDestructive ? "text-red-500" : "text-foreground"
       )}>
         {label}
       </span>
       {!isDestructive && (
-        <ChevronRight className="h-5 w-5 text-gray-400" />
+        <ChevronRight className="h-5 w-5 text-muted-foreground" />
       )}
     </button>
   );
@@ -146,36 +146,36 @@ export function SettingsPage({ onBack, onNavigate }: SettingsPageProps) {
   ];
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
+      <div className="sticky top-0 z-20 bg-background border-b border-border">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={handleBack}
-            className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+            className="p-2 -ml-2 rounded-full hover:bg-muted"
           >
-            <ArrowLeft className="h-5 w-5 text-black" />
+            <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
-          <h1 className="text-[17px] font-semibold text-black">Settings</h1>
+          <h1 className="text-[17px] font-semibold text-foreground">Settings</h1>
         </div>
       </div>
 
       {/* User Profile Section */}
       {user && (
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-200">
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
           <Avatar className="h-12 w-12 rounded-full">
             <AvatarImage src={user.avatar || undefined} />
             <AvatarFallback>{(user.displayName || user.handle)[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <h2 className="text-[17px] font-semibold text-black truncate">{user.displayName}</h2>
-            <p className="text-[15px] text-gray-500 truncate">@{user.handle}</p>
+            <h2 className="text-[17px] font-semibold text-foreground truncate">{user.displayName}</h2>
+            <p className="text-[15px] text-muted-foreground truncate">@{user.handle}</p>
           </div>
         </div>
       )}
 
       {/* Settings Menu Items */}
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-border">
         {settingsItems.map((item, index) => (
           <SettingsItem 
             key={index} 
@@ -187,7 +187,7 @@ export function SettingsPage({ onBack, onNavigate }: SettingsPageProps) {
       </div>
 
       {/* Sign Out */}
-      <div className="mt-2 border-t border-gray-200">
+      <div className="mt-2 border-t border-border">
         <SettingsItem 
           icon={<ArrowLeft className="h-5 w-5 rotate-180" />} 
           label="Sign out" 
