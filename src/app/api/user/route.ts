@@ -46,24 +46,44 @@ export async function GET(request: NextRequest) {
       if (rows.length) currentUserId = rows[0].user_id as string
     }
 
-    const users = await sql`
-      SELECT
-        u.id, u.handle, u.display_name, u.bio, u.avatar, u.banner,
-        u.website, u.created_at,
-        COUNT(DISTINCT f1.follower_id) AS followers_count,
-        COUNT(DISTINCT f2.following_id) AS following_count,
-        COUNT(DISTINCT p.id) AS posts_count
-        ${currentUserId ? sql`, EXISTS(
+    let users
+    if (currentUserId) {
+      users = await sql`
+        SELECT
+          u.id, u.handle, u.display_name, u.bio, u.avatar, u.banner,
+          u.website, u.created_at,
+          COUNT(DISTINCT f1.follower_id) AS followers_count,
+          COUNT(DISTINCT f2.following_id) AS following_count,
+          COUNT(DISTINCT p.id) AS posts_count,
+          EXISTS(
             SELECT 1 FROM follows WHERE follower_id = ${currentUserId} AND following_id = u.id
-          ) AS is_following` : sql`, false AS is_following`}
-      FROM users u
-      LEFT JOIN follows f1 ON f1.following_id = u.id
-      LEFT JOIN follows f2 ON f2.follower_id = u.id
-      LEFT JOIN posts p ON p.author_id = u.id
-      WHERE LOWER(u.handle) = LOWER(${handle})
-      GROUP BY u.id
-      LIMIT 1
-    `
+          ) AS is_following
+        FROM users u
+        LEFT JOIN follows f1 ON f1.following_id = u.id
+        LEFT JOIN follows f2 ON f2.follower_id = u.id
+        LEFT JOIN posts p ON p.author_id = u.id
+        WHERE LOWER(u.handle) = LOWER(${handle})
+        GROUP BY u.id
+        LIMIT 1
+      `
+    } else {
+      users = await sql`
+        SELECT
+          u.id, u.handle, u.display_name, u.bio, u.avatar, u.banner,
+          u.website, u.created_at,
+          COUNT(DISTINCT f1.follower_id) AS followers_count,
+          COUNT(DISTINCT f2.following_id) AS following_count,
+          COUNT(DISTINCT p.id) AS posts_count,
+          false AS is_following
+        FROM users u
+        LEFT JOIN follows f1 ON f1.following_id = u.id
+        LEFT JOIN follows f2 ON f2.follower_id = u.id
+        LEFT JOIN posts p ON p.author_id = u.id
+        WHERE LOWER(u.handle) = LOWER(${handle})
+        GROUP BY u.id
+        LIMIT 1
+      `
+    }
 
     if (!users.length) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     const u = users[0]
