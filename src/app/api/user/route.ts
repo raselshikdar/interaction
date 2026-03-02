@@ -65,14 +65,8 @@ export async function GET(request: NextRequest) {
       LIMIT 1
     `
 
-    console.log('[v0] GET /api/user - searching for handle:', handle, 'found users:', users.length)
-    if (users.length === 0) {
-      console.log('[v0] No user found, returning 404')
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
-    
+    if (!users.length) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     const u = users[0]
-    console.log('[v0] User found:', u.handle, 'with id:', u.id)
 
     return NextResponse.json({
       user: {
