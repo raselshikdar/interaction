@@ -262,49 +262,57 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
 
   const isOwnProfile = currentUser?.handle === handle;
 
-  const fetchProfile = useCallback(async () => {
+  useEffect(() => {
     setIsLoadingProfile(true);
     setUserNotFound(false);
-    try {
-      const headers: HeadersInit = {};
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      const response = await fetch(`/api/user?handle=${handle}`, { headers });
-      if (response.status === 404) {
+    
+    const fetchProfile = async () => {
+      try {
+        const headers: HeadersInit = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const response = await fetch(`/api/user?handle=${handle}`, { headers });
+        if (response.status === 404) {
+          setUserNotFound(true);
+          setProfileUser(null);
+          return;
+        }
+        if (response.ok) {
+          const data = await response.json();
+          setProfileUser(data.user);
+        }
+      } catch {
         setUserNotFound(true);
-        setProfileUser(null);
-        return;
+      } finally {
+        setIsLoadingProfile(false);
       }
-      if (response.ok) {
-        const data = await response.json();
-        setProfileUser(data.user);
-      }
-    } catch {
-      setUserNotFound(true);
-    } finally {
-      setIsLoadingProfile(false);
-    }
+    };
+    
+    fetchProfile();
   }, [handle, token]);
 
-  const fetchPosts = useCallback(async () => {
+  useEffect(() => {
     if (!profileUser) return;
+    
     setIsLoadingPosts(true);
-    try {
-      const headers: HeadersInit = {};
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      const response = await fetch(`/api/posts?userId=${profileUser.id}`, { headers });
-      if (response.ok) {
-        const data = await response.json();
-        setPosts(data.posts || []);
+    
+    const fetchPosts = async () => {
+      try {
+        const headers: HeadersInit = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const response = await fetch(`/api/posts?userId=${profileUser.id}`, { headers });
+        if (response.ok) {
+          const data = await response.json();
+          setPosts(data.posts || []);
+        }
+      } catch {
+        // silently fail
+      } finally {
+        setIsLoadingPosts(false);
       }
-    } catch {
-      // silently fail
-    } finally {
-      setIsLoadingPosts(false);
-    }
-  }, [profileUser, token]);
-
-  useEffect(() => { fetchProfile(); }, [fetchProfile]);
-  useEffect(() => { if (profileUser) fetchPosts(); }, [profileUser, fetchPosts]);
+    };
+    
+    fetchPosts();
+  }, [profileUser.id, token]);
 
   const handleLike = async (postId: string) => {
     if (!token) return;
