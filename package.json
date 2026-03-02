@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:seed": "npx tsx prisma/seed.ts",
-    "db:setup": "bash setup-neon.sh"
+    "db:setup": "npm run db:generate && npm run db:push && npm run db:seed",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

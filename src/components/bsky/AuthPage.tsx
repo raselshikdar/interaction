@@ -40,7 +40,9 @@ export function LoginPage() {
         setError(data.error || 'Login failed');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('[v0] Login error:', err);
+      const message = err instanceof Error ? err.message : 'An error occurred. Please try again.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -159,7 +161,9 @@ export function SignupPage() {
         setError(data.error || 'Signup failed');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('[v0] Signup error:', err);
+      const message = err instanceof Error ? err.message : 'An error occurred. Please try again.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
