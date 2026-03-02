@@ -52,7 +52,6 @@ import {
 export default function HomePage() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const { user, isAuthenticated, token } = useAuthStore();
   const { currentFeed, setComposerOpen, setQuotePost, setReplyTo } = useAppStore();
