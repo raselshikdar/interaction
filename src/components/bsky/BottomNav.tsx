@@ -60,7 +60,7 @@ export function BottomNav({ currentView, onNavigate, userHandle }: BottomNavProp
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 safe-area-inset-bottom">
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
         {navItems.map((item) => {
           const isActive = currentView === item.id;
@@ -75,7 +75,7 @@ export function BottomNav({ currentView, onNavigate, userHandle }: BottomNavProp
               onClick={() => onNavigate(item.id, item.id === 'profile' ? userHandle : undefined)}
               className={cn(
                 'flex flex-col items-center justify-center w-14 h-14 relative',
-                isActive ? 'text-black' : 'text-gray-500'
+                isActive ? 'text-foreground' : 'text-muted-foreground'
               )}
             >
               <div className="relative">
