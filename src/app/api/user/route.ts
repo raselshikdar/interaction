@@ -34,8 +34,6 @@ export async function GET(request: NextRequest) {
     // Profile mode
     if (!handle) return NextResponse.json({ error: 'Handle is required' }, { status: 400 })
 
-    console.log('[v0] Searching for handle:', handle, 'lowercased:', handle.toLowerCase())
-
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '') || null
     let currentUserId: string | null = null
@@ -47,12 +45,6 @@ export async function GET(request: NextRequest) {
       `
       if (rows.length) currentUserId = rows[0].user_id as string
     }
-
-    // Check if user exists first
-    const existingUser = await sql`
-      SELECT id, handle FROM users WHERE handle = ${handle.toLowerCase()} LIMIT 1
-    `
-    console.log('[v0] User found in first query:', existingUser)
 
     const users = await sql`
       SELECT
@@ -68,12 +60,10 @@ export async function GET(request: NextRequest) {
       LEFT JOIN follows f1 ON f1.following_id = u.id
       LEFT JOIN follows f2 ON f2.follower_id = u.id
       LEFT JOIN posts p ON p.author_id = u.id AND p.deleted_at IS NULL
-      WHERE u.handle = ${handle.toLowerCase()}
+      WHERE LOWER(u.handle) = LOWER(${handle})
       GROUP BY u.id
       LIMIT 1
     `
-
-    console.log('[v0] Profile query result:', users)
 
     if (!users.length) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     const u = users[0]
