@@ -70,8 +70,7 @@ function renderContent(
             e.preventDefault();
             e.stopPropagation();
             onHashtagClick?.(tag);
-            window.history.pushState(null, '', `/search/${encodeURIComponent(tag)}`);
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            router.push(`/search/${encodeURIComponent(tag)}`);
           }}
           className="text-[#0085ff] hover:underline"
         >
@@ -332,7 +331,7 @@ export function Post({
               onClick={(e) => {
                 e.stopPropagation();
                 if (onPostClick) onPostClick(post.quotePost!.id);
-                else { window.history.pushState(null, '', `/post/${post.quotePost!.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }
+                else { router.push(`/post/${post.quotePost!.id}`); }
               }}
             >
               <div className="flex items-center gap-2">

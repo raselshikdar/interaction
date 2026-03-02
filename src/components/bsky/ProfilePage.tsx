@@ -265,45 +265,34 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
   useEffect(() => {
     setIsLoadingProfile(true);
     setUserNotFound(false);
-    
-    console.log('[v0] ProfilePage - fetching profile for handle:', handle);
-    
+
     const fetchProfile = async () => {
       try {
-        const url = `/api/user?handle=${handle}`;
-        console.log('[v0] ProfilePage - making request to:', url);
         const headers: HeadersInit = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
-        const response = await fetch(url, { headers });
-        
-        console.log('[v0] ProfilePage - response status:', response.status);
-        
+        const response = await fetch(`/api/user?handle=${handle}`, { headers });
+
         if (response.status === 404) {
-          console.log('[v0] ProfilePage - 404 received, setting userNotFound');
           setUserNotFound(true);
           setProfileUser(null);
           setIsLoadingProfile(false);
           return;
         }
-        
+
         if (response.ok) {
           const data = await response.json();
-          console.log('[v0] ProfilePage - received user data:', data.user);
           setProfileUser(data.user);
         } else {
-          console.log('[v0] ProfilePage - response not ok, status:', response.status);
-          const text = await response.text();
-          console.log('[v0] ProfilePage - response body:', text);
           setUserNotFound(true);
         }
       } catch (error) {
-        console.error('[v0] ProfilePage - error fetching profile:', error);
+        console.error('Error fetching profile:', error);
         setUserNotFound(true);
       } finally {
         setIsLoadingProfile(false);
       }
     };
-    
+
     fetchProfile();
   }, [handle, token]);
 
