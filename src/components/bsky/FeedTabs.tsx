@@ -48,7 +48,7 @@ export function FeedTabs({ className, onTopicClick }: FeedTabsProps) {
  return (
     <>
       {/* Main Tabs - EXACT bsky style - aligned with header icons - STICKY */}
-      <div className={cn('sticky top-11 z-30 bg-white flex border-b border-gray-200 px-6', className)}>
+      <div className={cn('sticky top-11 z-30 bg-background flex border-b border-border px-6', className)}>
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
@@ -57,8 +57,8 @@ export function FeedTabs({ className, onTopicClick }: FeedTabsProps) {
               'flex-1 py-3 text-[15px] font-semibold transition-colors relative',
               index === 0 ? 'text-left' : index === tabs.length - 1 ? 'text-right' : 'text-center',
               currentFeed === tab.id
-                ? 'text-black tab-underline'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                ? 'text-foreground tab-underline'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
             {tab.label}
@@ -66,29 +66,28 @@ export function FeedTabs({ className, onTopicClick }: FeedTabsProps) {
         ))}
       </div>
 
-      {/* Trending Topics Bar - EXACT bsky.app style - NOT STICKY */}
       {showTrending && (
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-background border-b border-border">
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
             className="flex items-center gap-2 px-4 py-2 overflow-x-auto scrollbar-hide h-10"
           >
-            <TrendingUp className="h-4 w-4 text-[#0085ff] shrink-0" />
+            <TrendingUp className="h-4 w-4 text-primary shrink-0" />
             {trendingTopics.map((topic, idx) => (
               <button
                 key={idx}
                 onClick={() => handleTopicClick(topic.tag)}
-                className="text-[14px] font-medium text-gray-700 whitespace-nowrap hover:text-[#0085ff] transition-colors"
+                className="text-[14px] font-medium text-muted-foreground whitespace-nowrap hover:text-primary transition-colors"
               >
                 #{topic.tag}
               </button>
             ))}
             <button
               onClick={() => setShowTrending(false)}
-              className="p-1 hover:bg-gray-200 rounded-full shrink-0 ml-auto"
+              className="p-1 hover:bg-accent rounded-full shrink-0 ml-auto"
             >
-              <X className="h-4 w-4 text-[#6b7280]" />
+              <X className="h-4 w-4 text-muted-foreground" />
             </button>
           </div>
         </div>
@@ -112,7 +111,7 @@ const profileTabs: { id: string; label: string }[] = [
 
 export function ProfileTabs({ className, activeTab = 'posts', onTabChange }: ProfileTabsProps) {
   return (
-    <div className={cn('border-b border-gray-200 overflow-x-auto bg-white', className)}>
+    <div className={cn('border-b border-border overflow-x-auto bg-background', className)}>
       <div className="flex">
         {profileTabs.map((tab) => (
           <button
@@ -121,8 +120,8 @@ export function ProfileTabs({ className, activeTab = 'posts', onTabChange }: Pro
             className={cn(
               'px-5 py-3 text-center text-[15px] font-medium transition-colors relative whitespace-nowrap',
               activeTab === tab.id
-                ? 'text-black tab-underline'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                ? 'text-foreground tab-underline'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
             {tab.label}
@@ -146,7 +145,7 @@ const notificationTabs: { id: string; label: string }[] = [
 
 export function NotificationTabs({ className, activeTab = 'all', onTabChange }: NotificationTabsProps) {
   return (
-    <div className={cn('border-b border-gray-200 bg-white', className)}>
+    <div className={cn('border-b border-border bg-background', className)}>
       <div className="flex">
         {notificationTabs.map((tab) => (
           <button
@@ -155,8 +154,8 @@ export function NotificationTabs({ className, activeTab = 'all', onTabChange }: 
             className={cn(
               'flex-1 py-3 text-center text-[15px] font-medium transition-colors relative',
               activeTab === tab.id
-                ? 'text-black tab-underline'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                ? 'text-foreground tab-underline'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
             {tab.label}

@@ -205,21 +205,20 @@ function ConversationsList({
   onNewConversation 
 }: ConversationsListProps) {
   return (
-    <div className="h-full flex flex-col bg-white">
-      {/* Header with Back Button */}
-      <header className="sticky top-0 z-20 flex items-center justify-between h-14 px-4 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <div className="h-full flex flex-col bg-background">
+      <header className="sticky top-0 z-20 flex items-center justify-between h-14 px-4 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center gap-3">
           <button
             onClick={() => window.history.back()}
-            className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+            className="p-2 -ml-2 rounded-full hover:bg-accent"
           >
-            <ArrowLeft className="h-5 w-5 text-black" />
+            <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
-          <h1 className="font-semibold text-[17px] text-black">Messages</h1>
+          <h1 className="font-semibold text-[17px] text-foreground">Messages</h1>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100" asChild>
+        <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent" asChild>
           <Link href="/settings">
-            <Settings className="h-5 w-5 text-black" />
+            <Settings className="h-5 w-5 text-foreground" />
           </Link>
         </Button>
       </header>
@@ -239,7 +238,7 @@ function ConversationsList({
           conversations.map((conv) => (
             <button
               key={conv.partner.id}
-              className="flex items-center gap-3 w-full p-4 hover:bg-gray-50 transition-colors text-left border-b border-gray-100"
+              className="flex items-center gap-3 w-full p-4 hover:bg-accent transition-colors text-left border-b border-border"
               onClick={() => onSelectConversation(conv.partner)}
             >
               <div className="relative">
@@ -254,7 +253,7 @@ function ConversationsList({
                 <div className="flex items-center justify-between gap-2">
                   <p className={cn(
                     "font-semibold truncate",
-                    conv.unreadCount > 0 ? "text-black" : "text-gray-900"
+                    conv.unreadCount > 0 ? "text-foreground" : "text-foreground"
                   )}>
                     {conv.partner.displayName || conv.partner.handle}
                   </p>
@@ -265,7 +264,7 @@ function ConversationsList({
                 <div className="flex items-center justify-between gap-2">
                   <p className={cn(
                     "text-sm truncate",
-                    conv.unreadCount > 0 ? "text-black font-medium" : "text-gray-500"
+                    conv.unreadCount > 0 ? "text-foreground font-medium" : "text-muted-foreground"
                   )}>
                     {conv.lastMessage.senderId === conv.partner.id ? '' : 'You: '}
                     {conv.lastMessage.content || '📷 Photo'}
@@ -375,7 +374,7 @@ function ChatView({
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
+    <div className="h-full flex flex-col bg-background">
       {/* Header - WhatsApp style */}
       <header className="sticky top-0 z-20 flex items-center gap-2 h-14 px-2 bg-[#0085ff] text-white">
         <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0 rounded-full hover:bg-white/10 text-white">
@@ -431,7 +430,7 @@ function ChatView({
               <div key={groupIndex}>
                 {/* Date Separator */}
                 <div className="flex justify-center py-4">
-                  <span className="bg-white text-gray-500 text-xs px-3 py-1 rounded-full shadow-sm">
+                  <span className="bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full shadow-sm">
                     {formatDateSeparator(group.date)}
                   </span>
                 </div>
@@ -475,7 +474,7 @@ function ChatView({
                           'px-3 py-1.5 rounded-2xl shadow-sm',
                           isOwnMessage 
                             ? 'bg-[#0085ff] text-white rounded-tr-sm' 
-                            : 'bg-white text-gray-900 rounded-tl-sm'
+                            : 'bg-card text-foreground rounded-tl-sm'
                         )}>
                           {/* Image if exists */}
                           {message.imageUrl && (
@@ -522,7 +521,7 @@ function ChatView({
                     {(partner.displayName || partner.handle)[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-white px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm">
+                <div className="bg-card px-3 py-2 rounded-2xl rounded-tl-sm shadow-sm">
                   <div className="flex gap-1">
                     <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -537,7 +536,7 @@ function ChatView({
       </ScrollArea>
 
       {/* Input Area - WhatsApp style */}
-      <div className="border-t border-gray-200 p-2 bg-gray-100">
+        <div className="border-t border-border p-2 bg-muted">
         {/* Image preview */}
         {imageUrl && (
           <div className="relative inline-block mb-2">
@@ -568,7 +567,7 @@ function ChatView({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 h-9 bg-white border-gray-200 rounded-full px-4 focus-visible:ring-[#0085ff]"
+            className="flex-1 h-9 bg-background border-border rounded-full px-4 focus-visible:ring-primary"
             disabled={isSending}
           />
           
@@ -800,7 +799,7 @@ export function MessagesPage() {
     <div className="h-[calc(100vh-3.5rem)] md:h-screen flex flex-col md:flex-row max-w-4xl mx-auto">
       {/* Conversations List - Hidden on mobile when chat is open */}
       <div className={cn(
-        'flex-1 flex flex-col border-r border-gray-200',
+        'flex-1 flex flex-col border-r border-border',
         selectedPartner ? 'hidden md:flex md:w-80' : 'w-full'
       )}>
         <ConversationsList
@@ -827,7 +826,7 @@ export function MessagesPage() {
             isTyping={isTyping}
           />
         ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground bg-gray-50">
+          <div className="flex-1 flex items-center justify-center text-muted-foreground bg-background">
             <div className="text-center">
               <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
               <p className="text-gray-600">Select a conversation to start messaging</p>
