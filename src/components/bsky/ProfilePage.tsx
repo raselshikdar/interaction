@@ -487,6 +487,8 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
             <Post
               key={post.id}
               post={post}
+              onPostClick={(id) => { window.location.hash = `post/${id}`; }}
+              onAuthorClick={(handle) => { window.location.hash = `profile/${handle}`; }}
               onLike={() => handleLike(post.id)}
               onRepost={() => handleRepost(post.id)}
               onBookmark={() => handleBookmark(post.id)}
