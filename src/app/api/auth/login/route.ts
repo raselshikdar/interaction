@@ -74,9 +74,27 @@ export async function POST(request: NextRequest) {
       token
     });
   } catch (error) {
-    console.error('Login error:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('[v0] Login error:', errorMessage);
+    console.error('[v0] Full error:', error);
+    
+    // Provide more specific error messages for debugging
+    if (errorMessage.includes('ECONNREFUSED')) {
+      return NextResponse.json(
+        { error: 'Database connection failed. Please ensure Neon database is initialized.' },
+        { status: 500 }
+      );
+    }
+    
+    if (errorMessage.includes('relation') || errorMessage.includes('does not exist')) {
+      return NextResponse.json(
+        { error: 'Database schema not initialized. Run: npm run db:setup' },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: errorMessage },
       { status: 500 }
     );
   }
