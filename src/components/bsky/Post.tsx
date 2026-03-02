@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import type { Post as PostType } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -69,8 +70,7 @@ function renderContent(
             e.preventDefault();
             e.stopPropagation();
             onHashtagClick?.(tag);
-            window.history.pushState(null, '', `/search/${encodeURIComponent(tag)}`);
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            router.push(`/search/${encodeURIComponent(tag)}`);
           }}
           className="text-[#0085ff] hover:underline"
         >
@@ -83,12 +83,11 @@ function renderContent(
         <a
           key={key++}
           href={`/profile/${handle}`}
-          onClick={(e) => {
+            onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onMentionClick?.(handle);
-            window.history.pushState(null, '', `/profile/${handle}`);
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            router.push(`/profile/${handle}`);
           }}
           className="text-[#0085ff] hover:underline"
         >
@@ -144,6 +143,7 @@ export function Post({
   onAuthorClick,
   compact = false,
 }: PostProps) {
+  const router = useRouter();
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [isReposted, setIsReposted] = useState(post.isReposted);
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
@@ -186,8 +186,7 @@ export function Post({
     if (onAuthorClick) {
       onAuthorClick(post.author.handle);
     } else {
-      window.history.pushState(null, '', `/profile/${post.author.handle}`);
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      router.push(`/profile/${post.author.handle}`);
     }
   };
 
@@ -195,8 +194,7 @@ export function Post({
     if (onPostClick) {
       onPostClick(post.id);
     } else {
-      window.history.pushState(null, '', `/post/${post.id}`);
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      router.push(`/post/${post.id}`);
     }
   };
 
@@ -333,7 +331,7 @@ export function Post({
               onClick={(e) => {
                 e.stopPropagation();
                 if (onPostClick) onPostClick(post.quotePost!.id);
-                else { window.history.pushState(null, '', `/post/${post.quotePost!.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }
+                else { router.push(`/post/${post.quotePost!.id}`); }
               }}
             >
               <div className="flex items-center gap-2">

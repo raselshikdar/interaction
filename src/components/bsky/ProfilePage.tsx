@@ -265,20 +265,20 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
   useEffect(() => {
     setIsLoadingProfile(true);
     setUserNotFound(false);
-    
+
     const fetchProfile = async () => {
       try {
         const headers: HeadersInit = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
         const response = await fetch(`/api/user?handle=${handle}`, { headers });
-        
+
         if (response.status === 404) {
           setUserNotFound(true);
           setProfileUser(null);
           setIsLoadingProfile(false);
           return;
         }
-        
+
         if (response.ok) {
           const data = await response.json();
           setProfileUser(data.user);
@@ -286,13 +286,13 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
           setUserNotFound(true);
         }
       } catch (error) {
-        console.error('[v0] Error fetching profile:', error);
+        console.error('Error fetching profile:', error);
         setUserNotFound(true);
       } finally {
         setIsLoadingProfile(false);
       }
     };
-    
+
     fetchProfile();
   }, [handle, token]);
 
