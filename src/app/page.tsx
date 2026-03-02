@@ -8,7 +8,6 @@ import {
   Post, 
   PostSkeleton, 
   PostComposer,
-  ProfilePage,
   ExplorePage,
   NotificationsPage,
   MessagesPage,
@@ -71,15 +70,13 @@ export default function HomePage() {
   // Derive view state from URL path
   const getViewFromPath = () => {
     if (pathname === '/' || pathname === '/home') return 'home';
-    if (pathname.startsWith('/profile/')) return 'profile';
     if (pathname.startsWith('/post/')) return 'post';
     if (pathname.startsWith('/search/')) return 'search';
-    const seg = pathname.slice(1); // strip leading /
+    const seg = pathname.slice(1);
     return seg || 'home';
   };
 
   const currentView = getViewFromPath();
-  const profileHandle = pathname.startsWith('/profile/') ? pathname.split('/')[2] : null;
   const activePostId = pathname.startsWith('/post/') ? pathname.split('/')[2] : null;
   const searchTopic = pathname.startsWith('/search/') ? decodeURIComponent(pathname.split('/')[2] || '') : null;
 
@@ -228,8 +225,6 @@ export default function HomePage() {
         return <NotificationsPage onBack={() => nav('/')} onNavigate={nav} />;
       case 'messages':
         return <MessagesPage onBack={() => nav('/')} onNavigate={nav} />;
-      case 'profile':
-        return <ProfilePage handle={profileHandle || user.handle} onBack={() => router.back()} />;
       case 'settings':
         return <SettingsPage onBack={() => nav('/')} onNavigate={(view) => nav(`/${view}`)} />;
       case 'settings-account':
