@@ -217,7 +217,7 @@ export function Post({
       )}
       onClick={handleCardClick}
     >
-      <div className="flex gap-3">
+      <div className="flex gap-3 items-start">
         {/* Avatar — navigates to author profile */}
         <button
           type="button"
