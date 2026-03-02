@@ -7,6 +7,7 @@
 -- bcrypt hash for 'password123' with 10 rounds
 INSERT INTO users (id, email, handle, display_name, bio, website, password, verified, followers_count, following_count, posts_count)
 VALUES
+  ('user_rasel',   'rasel@bsky.app',    'rasel',   'Rasel Shikdar', 'Full-stack developer | Open source enthusiast | Building amazing things', 'https://rasel.dev', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', true,  890, 456, 12),
   ('user_alice',   'alice@bsky.app',   'alice',   'Alice Johnson', 'Tech enthusiast | Open source advocate | Building the future of social media', 'https://alice.dev', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', true,  1250, 340, 8),
   ('user_bob',     'bob@bsky.app',     'bob',     'Bob Smith',     'Designer & Developer. Creating beautiful things.', null,                   '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', false,  542, 210, 4),
   ('user_charlie', 'charlie@bsky.app', 'charlie', 'Charlie Davis', 'Music lover | Coffee addict | San Francisco', 'https://charliedavis.me',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', true,  3200, 890, 5),
@@ -17,6 +18,8 @@ ON CONFLICT (email) DO NOTHING;
 -- Posts
 INSERT INTO posts (id, content, author_id, like_count, repost_count, reply_count)
 VALUES
+  ('post_rasel_1', 'Welcome to my Bluesky profile! Excited to be part of this amazing community. #Bluesky #OpenWeb', 'user_rasel', 120, 34, 18),
+  ('post_rasel_2', 'Just shipped a new feature. Feels good to deploy clean code to production! #Devlife', 'user_rasel', 245, 67, 42),
   ('post_1',  'Just discovered Bluesky and I''m already loving the community here! The decentralized approach to social media is exactly what we need. #Bluesky #Decentralized',          'user_alice',    45, 12,  8),
   ('post_2',  'Working on a new design system for our product. It''s amazing how much consistency matters when building at scale. Anyone else deep in design tokens? #TechNews',           'user_bob',      23,  5,  3),
   ('post_3',  'Coffee and coding - the perfect morning combo. What''s your go-to productivity hack?',                                                                                       'user_charlie',  89, 21, 34),
