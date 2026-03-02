@@ -82,11 +82,11 @@ function SettingsToggleItem({
   onChange: (enabled: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-100">
+    <div className="flex items-center justify-between px-4 py-3.5 border-b border-border">
       <div className="flex-1 min-w-0 pr-4">
-        <p className="text-[15px] text-black">{label}</p>
+        <p className="text-[15px] text-foreground">{label}</p>
         {description && (
-          <p className="text-[13px] text-gray-500 mt-0.5">{description}</p>
+          <p className="text-[13px] text-muted-foreground mt-0.5">{description}</p>
         )}
       </div>
       <ToggleSwitch enabled={enabled} onChange={onChange} />
@@ -109,15 +109,15 @@ function SettingsNavItem({
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between px-4 py-3.5 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+      className="w-full flex items-center justify-between px-4 py-3.5 border-b border-border hover:bg-muted transition-colors"
     >
       <div className="flex-1 min-w-0 text-left">
-        <p className={cn("text-[15px]", isDestructive ? "text-red-500" : "text-black")}>{label}</p>
+        <p className={cn("text-[15px]", isDestructive ? "text-red-500" : "text-foreground")}>{label}</p>
         {description && (
-          <p className="text-[13px] text-gray-500 mt-0.5">{description}</p>
+          <p className="text-[13px] text-muted-foreground mt-0.5">{description}</p>
         )}
       </div>
-      <ChevronRight className="h-5 w-5 text-gray-400 shrink-0" />
+      <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
     </button>
   );
 }
@@ -133,15 +133,15 @@ function SettingsHeader({ title, onBack }: { title: string; onBack?: () => void 
   };
   
   return (
-    <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
+    <div className="sticky top-0 z-20 bg-background border-b border-border">
       <div className="flex items-center gap-3 px-4 py-3">
         <button
           onClick={handleBack}
-          className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+          className="p-2 -ml-2 rounded-full hover:bg-muted"
         >
-          <ArrowLeft className="h-5 w-5 text-black" />
+          <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
-        <h1 className="text-[17px] font-semibold text-black">{title}</h1>
+        <h1 className="text-[17px] font-semibold text-foreground">{title}</h1>
       </div>
     </div>
   );
@@ -159,11 +159,11 @@ function Modal({ isOpen, onClose, title, children }: {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-4 max-h-[80vh] overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-          <h2 className="text-[17px] font-semibold text-black">{title}</h2>
-          <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-gray-100">
-            <X className="h-5 w-5 text-gray-500" />
+      <div className="relative bg-background rounded-xl shadow-xl max-w-md w-full mx-4 max-h-[80vh] overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <h2 className="text-[17px] font-semibold text-foreground">{title}</h2>
+          <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-muted">
+            <X className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
         <div className="overflow-y-auto max-h-[calc(80vh-60px)]">
@@ -527,11 +527,11 @@ export function AccountSettingsPage({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Account" onBack={onBack} />
 
       {/* Avatar Section */}
-      <div className="flex flex-col items-center py-6 border-b border-gray-200">
+      <div className="flex flex-col items-center py-6 border-b border-border">
         <div className="relative">
           <Avatar className="h-20 w-20 rounded-full">
             <AvatarImage src={avatarPreview || user?.avatar || undefined} />
@@ -551,9 +551,9 @@ export function AccountSettingsPage({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Form Fields */}
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-border">
         <div className="px-4 py-3">
-          <label className="text-[13px] text-gray-500">Display Name</label>
+          <label className="text-[13px] text-muted-foreground">Display Name</label>
           <Input
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
@@ -576,7 +576,7 @@ export function AccountSettingsPage({ onBack }: { onBack?: () => void }) {
         </div>
 
         <div className="px-4 py-3">
-          <label className="text-[13px] text-gray-500">Email</label>
+          <label className="text-[13px] text-muted-foreground">Email</label>
           <div className="relative mt-1">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -590,17 +590,17 @@ export function AccountSettingsPage({ onBack }: { onBack?: () => void }) {
         </div>
 
         <div className="px-4 py-3">
-          <label className="text-[13px] text-gray-500">Bio</label>
+          <label className="text-[13px] text-muted-foreground">Bio</label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            className="mt-1 w-full h-24 px-3 py-2 text-[15px] border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-[#0085ff]"
+            className="mt-1 w-full h-24 px-3 py-2 text-[15px] text-foreground bg-background border border-border rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-[#0085ff]"
             placeholder="Tell us about yourself..."
           />
         </div>
 
         <div className="px-4 py-3">
-          <label className="text-[13px] text-gray-500">Website</label>
+          <label className="text-[13px] text-muted-foreground">Website</label>
           <Input
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
@@ -633,8 +633,8 @@ export function AccountSettingsPage({ onBack }: { onBack?: () => void }) {
 
       {/* Delete Account */}
       <div className="border-t border-gray-200 mt-4">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Danger Zone</h2>
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Danger Zone</h2>
         </div>
         <button
           onClick={() => setShowDeleteConfirm(true)}
@@ -744,7 +744,7 @@ export function PrivacySecuritySettingsPage({ onBack }: { onBack?: () => void })
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Privacy and Security" onBack={onBack} />
         <div className="flex items-center justify-center py-20">
           <div className="h-6 w-6 border-2 border-gray-300 border-t-[#0085ff] rounded-full animate-spin" />
@@ -756,7 +756,7 @@ export function PrivacySecuritySettingsPage({ onBack }: { onBack?: () => void })
   // Blocked Users View
   if (showBlockedUsers) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader 
           title="Blocked Accounts" 
           onBack={() => setShowBlockedUsers(false)} 
@@ -786,7 +786,7 @@ export function PrivacySecuritySettingsPage({ onBack }: { onBack?: () => void })
   // Muted Users View
   if (showMutedUsers) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader 
           title="Muted Accounts" 
           onBack={() => setShowMutedUsers(false)} 
@@ -814,13 +814,13 @@ export function PrivacySecuritySettingsPage({ onBack }: { onBack?: () => void })
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Privacy and Security" onBack={onBack} />
 
       {/* Privacy Section */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Privacy</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Privacy</h2>
         </div>
         
         <SettingsToggleItem
@@ -867,9 +867,9 @@ export function PrivacySecuritySettingsPage({ onBack }: { onBack?: () => void })
       </div>
 
       {/* Security Section */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Security</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Security</h2>
         </div>
         
         <SettingsNavItem
@@ -894,9 +894,9 @@ export function PrivacySecuritySettingsPage({ onBack }: { onBack?: () => void })
       </div>
 
       {/* Blocked/Muted */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Blocked & Muted</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Blocked & Muted</h2>
         </div>
         
         <SettingsNavItem
@@ -934,7 +934,7 @@ export function NotificationsSettingsPage({ onBack }: { onBack?: () => void }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Notifications" onBack={onBack} />
         <div className="flex items-center justify-center py-20">
           <div className="h-6 w-6 border-2 border-gray-300 border-t-[#0085ff] rounded-full animate-spin" />
@@ -944,13 +944,13 @@ export function NotificationsSettingsPage({ onBack }: { onBack?: () => void }) {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Notifications" onBack={onBack} />
 
       {/* General */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">General</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">General</h2>
         </div>
         
         <SettingsToggleItem
@@ -969,9 +969,9 @@ export function NotificationsSettingsPage({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Activity */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Activity</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Activity</h2>
         </div>
         
         <SettingsToggleItem
@@ -1026,7 +1026,7 @@ export function ContentMediaSettingsPage({ onBack }: { onBack?: () => void }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Content and Media" onBack={onBack} />
         <div className="flex items-center justify-center py-20">
           <div className="h-6 w-6 border-2 border-gray-300 border-t-[#0085ff] rounded-full animate-spin" />
@@ -1036,13 +1036,13 @@ export function ContentMediaSettingsPage({ onBack }: { onBack?: () => void }) {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Content and Media" onBack={onBack} />
 
       {/* Media */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Media</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Media</h2>
         </div>
         
         <SettingsToggleItem
@@ -1068,9 +1068,9 @@ export function ContentMediaSettingsPage({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Media Quality */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Media Quality</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Media Quality</h2>
         </div>
         
         <div className="px-4 py-3 border-b border-gray-100">
@@ -1084,7 +1084,7 @@ export function ContentMediaSettingsPage({ onBack }: { onBack?: () => void }) {
                   "flex-1 py-2 rounded-lg text-[14px] font-medium transition-colors",
                   settings?.mediaQuality === quality
                     ? "bg-[#0085ff] text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-muted text-muted-foreground hover:opacity-80"
                 )}
               >
                 {quality.charAt(0).toUpperCase() + quality.slice(1)}
@@ -1103,7 +1103,7 @@ export function AppearanceSettingsPage({ onBack }: { onBack?: () => void }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Appearance" onBack={onBack} />
         <div className="flex items-center justify-center py-20">
           <div className="h-6 w-6 border-2 border-gray-300 border-t-[#0085ff] rounded-full animate-spin" />
@@ -1113,13 +1113,13 @@ export function AppearanceSettingsPage({ onBack }: { onBack?: () => void }) {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Appearance" onBack={onBack} />
 
       {/* Theme */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Theme</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Theme</h2>
         </div>
         
         <div className="px-4 py-3 border-b border-gray-100">
@@ -1136,11 +1136,11 @@ export function AppearanceSettingsPage({ onBack }: { onBack?: () => void }) {
                   "flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2 transition-colors",
                   settings?.theme === value
                     ? "border-[#0085ff] bg-[#0085ff]/5"
-                    : "border-gray-200 hover:border-gray-300"
+                    : "border-border hover:border-muted-foreground"
                 )}
               >
-                <Icon className={cn("h-6 w-6", settings?.theme === value ? "text-[#0085ff]" : "text-gray-600")} />
-                <span className={cn("text-[14px] font-medium", settings?.theme === value ? "text-[#0085ff]" : "text-gray-600")}>{label}</span>
+                <Icon className={cn("h-6 w-6", settings?.theme === value ? "text-[#0085ff]" : "text-muted-foreground")} />
+                <span className={cn("text-[14px] font-medium", settings?.theme === value ? "text-[#0085ff]" : "text-muted-foreground")}>{label}</span>
               </button>
             ))}
           </div>
@@ -1148,9 +1148,9 @@ export function AppearanceSettingsPage({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Font Size */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Text Size</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Text Size</h2>
         </div>
         
         <div className="px-4 py-3 border-b border-gray-100">
@@ -1163,7 +1163,7 @@ export function AppearanceSettingsPage({ onBack }: { onBack?: () => void }) {
                   "flex-1 py-2 rounded-lg text-[14px] font-medium transition-colors",
                   settings?.fontSize === size
                     ? "bg-[#0085ff] text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-muted text-muted-foreground hover:opacity-80"
                 )}
               >
                 {size.charAt(0).toUpperCase() + size.slice(1)}
@@ -1177,9 +1177,9 @@ export function AppearanceSettingsPage({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Display */}
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Display</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Display</h2>
         </div>
         
         <SettingsToggleItem
@@ -1199,7 +1199,7 @@ export function AccessibilitySettingsPage({ onBack }: { onBack?: () => void }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Accessibility" onBack={onBack} />
         <div className="flex items-center justify-center py-20">
           <div className="h-6 w-6 border-2 border-gray-300 border-t-[#0085ff] rounded-full animate-spin" />
@@ -1209,10 +1209,10 @@ export function AccessibilitySettingsPage({ onBack }: { onBack?: () => void }) {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Accessibility" onBack={onBack} />
 
-      <div className="border-t border-gray-200">
+      <div className="border-t border-border">
         <SettingsToggleItem
           label="Screen Reader Support"
           description="Optimize for screen readers"
@@ -1263,7 +1263,7 @@ export function LanguageSettingsPage({ onBack }: { onBack?: () => void }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Languages" onBack={onBack} />
         <div className="flex items-center justify-center py-20">
           <div className="h-6 w-6 border-2 border-gray-300 border-t-[#0085ff] rounded-full animate-spin" />
@@ -1275,7 +1275,7 @@ export function LanguageSettingsPage({ onBack }: { onBack?: () => void }) {
   const currentLang = languages.find(l => l.code === settings?.language);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Languages" onBack={onBack} />
 
       <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
@@ -1284,7 +1284,7 @@ export function LanguageSettingsPage({ onBack }: { onBack?: () => void }) {
         </p>
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-border">
         {languages.map((lang) => (
           <button
             key={lang.code}
@@ -1343,10 +1343,10 @@ export function HelpSettingsPage({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Help" onBack={onBack} />
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-border">
         {helpItems.map((item, index) => (
           <button
             key={index}
@@ -1379,7 +1379,7 @@ export function AboutSettingsPage({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="About" onBack={onBack} />
 
       <div className="px-4 py-6 text-center border-b border-gray-200">
@@ -1393,7 +1393,7 @@ export function AboutSettingsPage({ onBack }: { onBack?: () => void }) {
         <p className="mt-1 text-[14px] text-gray-500">Version 1.0.0</p>
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-border">
         {aboutItems.map((item, index) => (
           <button
             key={index}
@@ -1478,7 +1478,7 @@ export function ModerationSettingsPage({ onBack }: { onBack?: () => void }) {
   // Muted Words View
   if (showMutedWords) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader 
           title="Muted Words" 
           onBack={() => setShowMutedWords(false)} 
@@ -1530,12 +1530,12 @@ export function ModerationSettingsPage({ onBack }: { onBack?: () => void }) {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Moderation" onBack={onBack} />
 
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Content Controls</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Content Controls</h2>
         </div>
         
         <SettingsNavItem
@@ -1554,9 +1554,9 @@ export function ModerationSettingsPage({ onBack }: { onBack?: () => void }) {
         />
       </div>
 
-      <div className="border-t border-gray-200">
-        <div className="px-4 py-2 bg-gray-50">
-          <h2 className="text-[13px] font-medium text-gray-500 uppercase">Blocked & Muted</h2>
+      <div className="border-t border-border">
+        <div className="px-4 py-2 bg-muted">
+          <h2 className="text-[13px] font-medium text-muted-foreground uppercase">Blocked & Muted</h2>
         </div>
         
         <SettingsNavItem
@@ -1614,7 +1614,7 @@ export function AddAccountSettingsPage({ onBack }: { onBack?: () => void }) {
 
   if (showLoginForm) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <SettingsHeader title="Sign In" onBack={() => setShowLoginForm(false)} />
         
         <form onSubmit={handleLogin} className="p-4 space-y-4">
@@ -1626,7 +1626,7 @@ export function AddAccountSettingsPage({ onBack }: { onBack?: () => void }) {
           )}
 
           <div>
-            <label className="text-[13px] text-gray-500">Handle</label>
+          <label className="text-[13px] text-muted-foreground">Handle</label>
             <div className="relative mt-1">
               <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -1664,7 +1664,7 @@ export function AddAccountSettingsPage({ onBack }: { onBack?: () => void }) {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       <SettingsHeader title="Add Account" onBack={onBack} />
 
       <div className="p-6 text-center">
@@ -1677,7 +1677,7 @@ export function AddAccountSettingsPage({ onBack }: { onBack?: () => void }) {
         </p>
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-border">
         <button
           onClick={() => setShowLoginForm(true)}
           className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 transition-colors"
