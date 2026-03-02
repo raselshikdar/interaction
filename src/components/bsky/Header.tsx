@@ -44,18 +44,18 @@ export function Header({
   return (
     <header className={cn(
       'sticky top-0 z-40 flex items-center h-11 px-4',
-      transparent ? 'bg-transparent' : 'bg-white border-b border-gray-200'
+      transparent ? 'bg-transparent' : 'bg-background border-b border-border'
     )}>
-      {/* Left Section - Menu (24px icon) */}
+      {/* Left Section */}
       <div className="flex items-center w-10">
         {showMenu && isAuthenticated && (
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-10 w-10 rounded-full hover:bg-gray-100 p-0"
+            className="h-10 w-10 rounded-full hover:bg-accent p-0"
             onClick={onMenuClick}
           >
-            <Menu className="size-6 text-black" />
+            <Menu className="size-6 text-foreground" />
           </Button>
         )}
 
@@ -63,7 +63,7 @@ export function Header({
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-10 w-10 rounded-full hover:bg-muted p-0"
+            className="h-10 w-10 rounded-full hover:bg-accent p-0"
             onClick={() => router.back()}
           >
             <ArrowLeft className="size-6 text-foreground" />
@@ -71,27 +71,27 @@ export function Header({
         )}
       </div>
 
-      {/* Center Section - Logo (32px - larger) or Title */}
+      {/* Center Section */}
       <div className="flex-1 flex justify-center items-center">
         {title ? (
-          <h1 className="text-[17px] font-semibold text-black truncate">{title}</h1>
+          <h1 className="text-[17px] font-semibold text-foreground truncate">{title}</h1>
         ) : (
           <button onClick={() => router.push('/')} className="flex items-center justify-center">
-            <SmileyLogo className="size-8 text-[#0085ff]" />
+            <SmileyLogo className="size-8 text-primary" />
           </button>
         )}
       </div>
 
-      {/* Right Section - Hash Icon (24px icon) */}
+      {/* Right Section */}
       <div className="flex items-center justify-end w-10">
         {isAuthenticated && !title && (
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-10 w-10 rounded-full hover:bg-gray-100 p-0"
+            className="h-10 w-10 rounded-full hover:bg-accent p-0"
             onClick={handleFeedsClick}
           >
-            <Hash className="size-6 text-black" />
+            <Hash className="size-6 text-foreground" />
           </Button>
         )}
       </div>

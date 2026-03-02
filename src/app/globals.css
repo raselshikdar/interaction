@@ -43,75 +43,77 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Light mode — HSL space-separated values for tailwind.config.ts compatibility */
 :root {
   --radius: 0.625rem;
-  /* Bluesky light colors */
-  --background: #ffffff;
-  --foreground: #000000;
-  --card: #ffffff;
-  --card-foreground: #000000;
-  --popover: #ffffff;
-  --popover-foreground: #000000;
-  --primary: #0085ff;
-  --primary-foreground: #ffffff;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #000000;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: #f3f4f6;
-  --accent-foreground: #000000;
-  --destructive: #ef4444;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #0085ff;
-  --chart-1: #0085ff;
-  --chart-2: #10b981;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b5cf6;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #0085ff;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3f4f6;
-  --sidebar-accent-foreground: #000000;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #0085ff;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --primary: 211 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 220 14% 96%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 211 100% 50%;
+  --chart-1: 211 100% 50%;
+  --chart-2: 160 84% 39%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 0 84% 60%;
+  --chart-5: 271 91% 65%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 0 0% 0%;
+  --sidebar-primary: 211 100% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 220 14% 96%;
+  --sidebar-accent-foreground: 0 0% 0%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 211 100% 50%;
 }
 
-/* Premium dark mode — deep near-black with subtle warmth */
+/* Premium dark mode — deep near-black with subtle blue undertone */
 .dark {
-  --background: #0a0a0f;
-  --foreground: #e8e8f0;
-  --card: #111118;
-  --card-foreground: #e8e8f0;
-  --popover: #16161f;
-  --popover-foreground: #e8e8f0;
-  --primary: #1d9bf0;
-  --primary-foreground: #ffffff;
-  --secondary: #1c1c26;
-  --secondary-foreground: #c8c8d8;
-  --muted: #1c1c26;
-  --muted-foreground: #7a7a9a;
-  --accent: #1c1c26;
-  --accent-foreground: #e8e8f0;
-  --destructive: #f44336;
-  --border: #1e1e2a;
-  --input: #1e1e2a;
-  --ring: #1d9bf0;
-  --chart-1: #1d9bf0;
-  --chart-2: #10b981;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b5cf6;
-  --sidebar: #0a0a0f;
-  --sidebar-foreground: #e8e8f0;
-  --sidebar-primary: #1d9bf0;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1c1c26;
-  --sidebar-accent-foreground: #e8e8f0;
-  --sidebar-border: #1e1e2a;
-  --sidebar-ring: #1d9bf0;
+  --background: 240 15% 6%;
+  --foreground: 240 15% 94%;
+  --card: 240 13% 9%;
+  --card-foreground: 240 15% 94%;
+  --popover: 240 12% 11%;
+  --popover-foreground: 240 15% 94%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 11% 14%;
+  --secondary-foreground: 240 10% 86%;
+  --muted: 240 11% 14%;
+  --muted-foreground: 240 8% 54%;
+  --accent: 240 11% 14%;
+  --accent-foreground: 240 15% 94%;
+  --destructive: 0 90% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 10% 16%;
+  --input: 240 10% 16%;
+  --ring: 207 90% 54%;
+  --chart-1: 207 90% 54%;
+  --chart-2: 160 84% 39%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 0 84% 60%;
+  --chart-5: 271 91% 65%;
+  --sidebar: 240 15% 6%;
+  --sidebar-foreground: 240 15% 94%;
+  --sidebar-primary: 207 90% 54%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 11% 14%;
+  --sidebar-accent-foreground: 240 15% 94%;
+  --sidebar-border: 240 10% 16%;
+  --sidebar-ring: 207 90% 54%;
 }
 
 @layer base {
@@ -129,71 +131,74 @@
 
   /* Override hardcoded Tailwind colors in dark mode */
   .dark .bg-white {
-    background-color: var(--card) !important;
+    background-color: hsl(var(--card)) !important;
   }
   .dark .bg-white\/95 {
-    background-color: color-mix(in srgb, var(--card) 95%, transparent) !important;
+    background-color: hsl(var(--card) / 0.95) !important;
   }
   .dark .bg-gray-50 {
-    background-color: #111118 !important;
+    background-color: hsl(240 13% 9%) !important;
   }
   .dark .bg-gray-100 {
-    background-color: #1c1c26 !important;
+    background-color: hsl(240 11% 14%) !important;
   }
   .dark .bg-gray-200 {
-    background-color: #1e1e2a !important;
+    background-color: hsl(240 10% 16%) !important;
   }
   .dark .bg-gray-300 {
-    background-color: #26263a !important;
+    background-color: hsl(240 9% 20%) !important;
   }
   .dark .text-black {
-    color: var(--foreground) !important;
+    color: hsl(var(--foreground)) !important;
   }
   .dark .text-gray-900 {
-    color: #e8e8f0 !important;
+    color: hsl(240 15% 94%) !important;
+  }
+  .dark .text-gray-800 {
+    color: hsl(240 12% 82%) !important;
   }
   .dark .text-gray-700 {
-    color: #b0b0c8 !important;
+    color: hsl(240 10% 74%) !important;
   }
   .dark .text-gray-600 {
-    color: #9090b0 !important;
+    color: hsl(240 8% 64%) !important;
   }
   .dark .text-gray-500 {
-    color: #7a7a9a !important;
+    color: hsl(240 8% 54%) !important;
   }
   .dark .text-gray-400 {
-    color: #606080 !important;
+    color: hsl(240 6% 44%) !important;
   }
   .dark .border-gray-100 {
-    border-color: #1a1a24 !important;
+    border-color: hsl(240 10% 13%) !important;
   }
   .dark .border-gray-200 {
-    border-color: #1e1e2a !important;
+    border-color: hsl(var(--border)) !important;
   }
   .dark .border-gray-300 {
-    border-color: #26263a !important;
+    border-color: hsl(240 9% 20%) !important;
   }
   .dark .hover\:bg-gray-50:hover {
-    background-color: #16161f !important;
+    background-color: hsl(240 12% 11%) !important;
   }
   .dark .hover\:bg-gray-100:hover {
-    background-color: #1c1c26 !important;
+    background-color: hsl(240 11% 14%) !important;
   }
   .dark .hover\:bg-gray-200:hover {
-    background-color: #22222e !important;
+    background-color: hsl(240 10% 16%) !important;
   }
   .dark input,
   .dark textarea,
   .dark select {
-    background-color: var(--input) !important;
-    color: var(--foreground) !important;
-    border-color: var(--border) !important;
+    background-color: hsl(var(--input)) !important;
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
   }
   .dark input::placeholder,
   .dark textarea::placeholder {
-    color: var(--muted-foreground) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
-  /* Toggle switch knob */
+  /* Keep toggle switch knob white */
   .dark .bg-white.rounded-full {
     background-color: #ffffff !important;
   }
