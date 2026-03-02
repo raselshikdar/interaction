@@ -1,0 +1,323 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  handle        String   @unique
+  displayName   String?
+  avatar        String?
+  banner        String?
+  bio           String?
+  website       String?
+  password      String
+  verified      Boolean  @default(false)
+  followersCount Int     @default(0)
+  followingCount Int     @default(0)
+  postsCount    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  posts         Post[]
+  comments      Comment[]
+  likes         Like[]
+  reposts       Repost[]
+  bookmarks     Bookmark[]
+  followers     Follow[]  @relation("UserFollows")
+  following     Follow[]  @relation("UserFollowing")
+  notifications Notification[]
+  sentMessages  Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  feeds         Feed[]
+  listMembers   ListMember[]
+  interests     UserInterest[]
+  muteList      Mute[]
+  blockList     Block[]
+  sessions      Session[]
+  settings      UserSettings?
+  mutedWords    MutedWord[]
+}
+
+model UserSettings {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  
+  // Privacy Settings
+  isPrivate             Boolean  @default(false)
+  showFollowers         Boolean  @default(true)
+  showFollowing         Boolean  @default(true)
+  allowTagging          Boolean  @default(true)
+  allowMentions         Boolean  @default(true)
+  showOnlineStatus      Boolean  @default(true)
+  
+  // Security Settings
+  twoFactorEnabled      Boolean  @default(false)
+  loginAlerts           Boolean  @default(true)
+  
+  // Notification Settings
+  pushNotifications     Boolean  @default(true)
+  emailNotifications    Boolean  @default(true)
+  notifyFollows         Boolean  @default(true)
+  notifyLikes           Boolean  @default(true)
+  notifyReposts         Boolean  @default(true)
+  notifyReplies         Boolean  @default(true)
+  notifyMentions        Boolean  @default(true)
+  notifyQuotes          Boolean  @default(true)
+  
+  // Content Settings
+  autoplayVideos        Boolean  @default(true)
+  showSensitiveContent  Boolean  @default(false)
+  mediaQuality          String   @default("auto") // auto, high, low
+  reduceMotion          Boolean  @default(false)
+  
+  // Appearance Settings
+  theme                 String   @default("system") // light, dark, system
+  fontSize              String   @default("medium") // small, medium, large
+  compactMode           Boolean  @default(false)
+  
+  // Accessibility Settings
+  screenReader          Boolean  @default(false)
+  highContrast          Boolean  @default(false)
+  reduceAnimations      Boolean  @default(false)
+  
+  // Language Settings
+  language              String   @default("en")
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  content     String
+  images      String?  // JSON array of image URLs
+  video       String?
+  link        String?
+  linkCard    String?  // JSON object for link preview
+  authorId    String
+  parentId    String?
+  replyCount  Int      @default(0)
+  repostCount Int      @default(0)
+  likeCount   Int      @default(0)
+  bookmarkCount Int    @default(0)
+  isPinned    Boolean  @default(false)
+  isReply     Boolean  @default(false)
+  quotePostId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent      Post?    @relation("PostReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies     Post[]   @relation("PostReplies")
+  comments    Comment[]
+  likes       Like[]
+  reposts     Repost[]
+  bookmarks   Bookmark[]
+  quotePost   Post?    @relation("QuotePost", fields: [quotePostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quotedBy    Post[]   @relation("QuotePost")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  postId    String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model Repost {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  content   String?  // For quote reposts
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User     @relation("UserFollows", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  type        String   // follow, like, repost, reply, mention, quote
+  userId      String   // recipient
+  actorId     String?
+  postId      String?
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+  senderId    String
+  receiverId  String
+  read        Boolean  @default(false)
+  readAt      DateTime?
+  imageUrl    String?
+  imageAlt    String?
+  createdAt   DateTime @default(now())
+
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([receiverId, read])
+  @@index([senderId, receiverId])
+}
+
+model Feed {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  avatar      String?
+  creatorId   String
+  isPublic    Boolean  @default(true)
+  pinsCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+}
+
+model List {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  avatar      String?
+  creatorId   String
+  isPublic    Boolean  @default(true)
+  membersCount Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     ListMember[]
+}
+
+model ListMember {
+  id        String   @id @default(cuid())
+  listId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, userId])
+}
+
+model UserInterest {
+  id        String   @id @default(cuid())
+  userId    String
+  interest  String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, interest])
+}
+
+model Mute {
+  id        String   @id @default(cuid())
+  userId    String
+  mutedId   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mutedId])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  userId    String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blockedId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MutedWord {
+  id        String   @id @default(cuid())
+  userId    String
+  word      String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, word])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@unique([identifier, token])
+}
