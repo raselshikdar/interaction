@@ -391,7 +391,7 @@ export function ExplorePage() {
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
-            onClick={() => window.location.hash = 'home'}
+            onClick={() => window.history.back()}
             className="p-2 -ml-2 rounded-full hover:bg-gray-100"
           >
             <ArrowLeft className="h-5 w-5 text-black" />

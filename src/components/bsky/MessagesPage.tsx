@@ -210,7 +210,7 @@ function ConversationsList({
       <header className="sticky top-0 z-20 flex items-center justify-between h-14 px-4 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => window.location.hash = 'home'}
+            onClick={() => window.history.back()}
             className="p-2 -ml-2 rounded-full hover:bg-gray-100"
           >
             <ArrowLeft className="h-5 w-5 text-black" />
@@ -218,7 +218,7 @@ function ConversationsList({
           <h1 className="font-semibold text-[17px] text-black">Messages</h1>
         </div>
         <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100" asChild>
-          <Link href="#settings">
+          <Link href="/settings">
             <Settings className="h-5 w-5 text-black" />
           </Link>
         </Button>
@@ -382,7 +382,7 @@ function ChatView({
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <Link 
-          href={`#profile/${partner.handle}`}
+              href={`/profile/${partner.handle}`}
           className="flex items-center gap-2 flex-1 min-w-0"
         >
           <Avatar className="h-9 w-9 border-2 border-white/20">

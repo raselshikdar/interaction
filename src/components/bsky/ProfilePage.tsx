@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store';
 import { Post, PostSkeleton, FollowButton, ProfileTabs } from '@/components/bsky';
@@ -249,6 +250,7 @@ function EditProfileModal({
 
 // ─── ProfilePage ──────────────────────────────────────────────────────────────
 export function ProfilePage({ handle, onBack }: ProfilePageProps) {
+  const router = useRouter();
   const { user: currentUser, token, setUser } = useAuthStore();
   const [profileUser, setProfileUser] = useState<ProfileUser | null>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -333,7 +335,7 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
         </div>
         <h2 className="text-xl font-bold text-foreground mb-2">User not found</h2>
         <p className="text-muted-foreground mb-6">The user @{handle} doesn't exist or has been deactivated.</p>
-        <Button className="rounded-full bg-[#0085ff] hover:bg-[#0070e0]" onClick={() => window.location.hash = 'home'}>
+        <Button className="rounded-full bg-[#0085ff] hover:bg-[#0070e0]" onClick={() => router.push('/')}>
           Go back home
         </Button>
       </div>
@@ -386,7 +388,7 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
         <div className="absolute top-0 left-0 right-0 z-10">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
-              onClick={onBack || (() => window.location.hash = 'home')}
+              onClick={onBack || (() => router.push('/'))}
               className="p-2 -ml-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
             >
               <ArrowLeft className="h-5 w-5 text-white" />
@@ -487,8 +489,8 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
             <Post
               key={post.id}
               post={post}
-              onPostClick={(id) => { window.location.hash = `post/${id}`; }}
-              onAuthorClick={(handle) => { window.location.hash = `profile/${handle}`; }}
+              onPostClick={(id) => router.push(`/post/${id}`)}
+              onAuthorClick={(h) => router.push(`/profile/${h}`)}
               onLike={() => handleLike(post.id)}
               onRepost={() => handleRepost(post.id)}
               onBookmark={() => handleBookmark(post.id)}

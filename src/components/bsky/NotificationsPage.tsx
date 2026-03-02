@@ -352,7 +352,7 @@ export function NotificationsPage() {
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.location.hash = 'home'}
+              onClick={() => window.history.back()}
               className="p-2 -ml-2 rounded-full hover:bg-gray-100"
             >
               <ArrowLeft className="h-5 w-5 text-black" />
@@ -372,7 +372,7 @@ export function NotificationsPage() {
               </Button>
             )}
             <Button variant="ghost" size="icon" className="shrink-0 rounded-full hover:bg-gray-100" asChild>
-              <Link href="#settings">
+              <Link href="/settings">
                 <Settings className="h-5 w-5 text-black" />
               </Link>
             </Button>
