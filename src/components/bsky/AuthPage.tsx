@@ -34,6 +34,8 @@ export function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
+        console.log('[v0] Login successful. User data:', data.user);
+        console.log('[v0] User handle from login:', data.user.handle);
         login(data.user, data.token);
         router.push('/');
       } else {
