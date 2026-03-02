@@ -268,14 +268,11 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
     
     const fetchProfile = async () => {
       try {
-        console.log('[v0] Fetching profile for handle:', handle);
         const headers: HeadersInit = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
         const response = await fetch(`/api/user?handle=${handle}`, { headers });
-        console.log('[v0] Profile API response status:', response.status);
         
         if (response.status === 404) {
-          console.log('[v0] User not found');
           setUserNotFound(true);
           setProfileUser(null);
           setIsLoadingProfile(false);
@@ -284,10 +281,8 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
         
         if (response.ok) {
           const data = await response.json();
-          console.log('[v0] Profile data received:', data.user);
           setProfileUser(data.user);
         } else {
-          console.log('[v0] Profile fetch failed with status:', response.status);
           setUserNotFound(true);
         }
       } catch (error) {
