@@ -268,19 +268,30 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
     
     const fetchProfile = async () => {
       try {
+        console.log('[v0] Fetching profile for handle:', handle);
         const headers: HeadersInit = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
         const response = await fetch(`/api/user?handle=${handle}`, { headers });
+        console.log('[v0] Profile API response status:', response.status);
+        
         if (response.status === 404) {
+          console.log('[v0] User not found');
           setUserNotFound(true);
           setProfileUser(null);
+          setIsLoadingProfile(false);
           return;
         }
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('[v0] Profile data received:', data.user);
           setProfileUser(data.user);
+        } else {
+          console.log('[v0] Profile fetch failed with status:', response.status);
+          setUserNotFound(true);
         }
-      } catch {
+      } catch (error) {
+        console.error('[v0] Error fetching profile:', error);
         setUserNotFound(true);
       } finally {
         setIsLoadingProfile(false);
@@ -291,7 +302,11 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
   }, [handle, token]);
 
   useEffect(() => {
-    if (!profileUser) return;
+    if (!profileUser) {
+      setPosts([]);
+      setIsLoadingPosts(false);
+      return;
+    }
     
     setIsLoadingPosts(true);
     
@@ -304,15 +319,16 @@ export function ProfilePage({ handle, onBack }: ProfilePageProps) {
           const data = await response.json();
           setPosts(data.posts || []);
         }
-      } catch {
-        // silently fail
+      } catch (error) {
+        console.error('[v0] Error fetching posts:', error);
+        setPosts([]);
       } finally {
         setIsLoadingPosts(false);
       }
     };
     
     fetchPosts();
-  }, [profileUser.id, token]);
+  }, [profileUser, token]);
 
   const handleLike = async (postId: string) => {
     if (!token) return;
