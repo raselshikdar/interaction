@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       FROM users u
       LEFT JOIN follows f1 ON f1.following_id = u.id
       LEFT JOIN follows f2 ON f2.follower_id = u.id
-      LEFT JOIN posts p ON p.author_id = u.id AND p.deleted_at IS NULL
+      LEFT JOIN posts p ON p.author_id = u.id
       WHERE LOWER(u.handle) = LOWER(${handle})
       GROUP BY u.id
       LIMIT 1
